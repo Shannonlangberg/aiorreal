@@ -75,7 +75,7 @@
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="config.js?v=6"></script>
+<script src="config.js?v=7"></script>
 <script>
 const KEY_H={apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
 const toast=m=>{const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1900);};
@@ -180,6 +180,12 @@ function card(r,i){
       <div data-el="prevwrap">${r.media_url?(r.media_type==="audio"?`<audio controls src="${esc(r.media_url)}" style="margin-top:8px;width:100%"></audio>`:`<img class="prev" src="${esc(r.media_url)}">`):`<div class="muted" style="margin-top:6px">Nothing uploaded yet.</div>`}</div>
     </div>
 
+    <div data-blk="revealaudio" class="${r.media_type==="audio"?"":"hide"}">
+      <label class="f">Reveal audio — optional (fades the main clip's music down and plays during the reveal, e.g. a snippet that gives away the fake)</label>
+      <div class="rowflex"><input type="file" accept="audio/*" data-a="revealfile" style="width:auto"><span class="muted" data-el="revealupstat"></span></div>
+      <div data-el="revealprevwrap">${r.reveal_media_url?`<audio controls src="${esc(r.reveal_media_url)}" style="margin-top:8px;width:100%"></audio>`:`<div class="muted" style="margin-top:6px">Nothing uploaded yet.</div>`}</div>
+    </div>
+
     <div data-blk="choice" class="${r.interaction!=="choice"?"hide":""}">
       <label class="f">Answer options (tick the correct one)</label>
       <div data-el="opts"></div>
@@ -237,6 +243,7 @@ function card(r,i){
     const mt=el.querySelector('[data-f="media_type"]').value;
     const interaction=el.querySelector('[data-f="interaction"]').value;
     el.querySelector('[data-blk="media"]').classList.toggle("hide", mt==="none" || interaction==="imgpick");
+    el.querySelector('[data-blk="revealaudio"]').classList.toggle("hide", mt!=="audio" || interaction==="imgpick");
   }
   el.querySelector('[data-f="media_type"]').addEventListener("change",e=>{
     const t=e.target.value;
@@ -257,6 +264,13 @@ function card(r,i){
   fileInp.onchange=async()=>{const f=fileInp.files[0];if(!f)return;const st=el.querySelector('[data-el="upstat"]');st.textContent="Uploading…";
     try{const url=await uploadFile(f);const mt=el.querySelector('[data-f="media_type"]').value;
       await patchRound(r.id,{media_url:url,media_type:mt==="none"?"image":mt});st.textContent="Uploaded ✓";toast("Media added");await reload();
+    }catch(err){st.textContent="Upload failed";toast(String(err.message||err));}};
+
+  // reveal-audio upload (the "twist" clip that plays during the reveal for audio rounds)
+  const revealFileInp=el.querySelector('[data-a="revealfile"]');
+  revealFileInp.onchange=async()=>{const f=revealFileInp.files[0];if(!f)return;const st=el.querySelector('[data-el="revealupstat"]');st.textContent="Uploading…";
+    try{const url=await uploadFile(f);
+      await patchRound(r.id,{reveal_media_url:url});st.textContent="Uploaded ✓";toast("Reveal audio added");await reload();
     }catch(err){st.textContent="Upload failed";toast(String(err.message||err));}};
 
   // actions

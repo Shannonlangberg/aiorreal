@@ -170,6 +170,7 @@ function normalizeRound(r,i){
     label: r.label||"", difficulty: r.difficulty||"",
     prompt: r.prompt||"", content: r.content||"",
     media_type: r.media_type||"none", media_url: r.media_url||"",
+    reveal_media_url: r.reveal_media_url||"",
     interaction: r.interaction||"choice",
     options: Array.isArray(r.options) ? r.options : (r.options ? JSON.parse(r.options) : []),
     option_images: Array.isArray(r.option_images) ? r.option_images : (r.option_images ? JSON.parse(r.option_images) : []),

@@ -171,7 +171,7 @@
   <button class="cbtn warn" id="btnReset">Reset</button>
 </div>
 
-<script src="config.js?v=6"></script>
+<script src="config.js?v=7"></script>
 <script>
 const H={"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
 async function sbGet(p){const r=await fetch(SUPABASE_URL+"/rest/v1/"+p,{headers:H});if(!r.ok)throw 0;return r.json();}
@@ -225,7 +225,7 @@ function mediaScreen(r){
   if(r.media_type==="image" && r.interaction!=="tapgrid") return `<img class="qimg pop" src="${roundImage(r)}" alt="Round ${r.n}" onerror="this.style.display='none'">`;
   if(r.media_type==="audio"){
     return r.media_url
-      ? `<audio controls src="${r.media_url}"></audio><div class="audionote">Press play — the crowd votes on their phones</div>`
+      ? `<audio class="duckable" controls src="${r.media_url}"></audio><div class="audionote">Press play — the crowd votes on their phones (music ducks automatically)</div>`
       : `<div class="audionote">🔊 Audio not uploaded yet (add it in the admin page)</div>`;
   }
   return "";
@@ -300,11 +300,15 @@ async function renderReveal(r){
     tallyBlock=`<div class="tally">${rows}</div>`;
   }
   const mbadge = r.mode==="blitz"?`<span class="qhead"><span class="m">⚡ Blitz · 1.5× points</span></span>`:(r.mode==="sudden_death"?`<span class="qhead"><span class="m sd">💀 Sudden Death</span></span>`:"");
+  const revealAudioBlock = (r.media_type==="audio" && r.reveal_media_url)
+    ? `<audio class="duckable" controls src="${r.reveal_media_url}"></audio><div class="audionote">🎧 Press play — hear what gave it away (music ducks automatically)</div>`
+    : "";
   stage.innerHTML=`<div class="fade" style="width:100%;display:flex;flex-direction:column;align-items:center">
     <div class="stamplbl">The answer is…</div>
     <div class="ans c${ci} pop">${esc(optLabel(r,ci))}</div>
     ${mbadge}
     <div class="revealfact">${esc(r.reveal)}</div>
+    ${revealAudioBlock}
     ${tallyBlock}
     <div class="gotright">🎯 ${correct.toLocaleString()} of ${total.toLocaleString()} nailed it</div></div>`;
 }
@@ -387,7 +391,8 @@ document.getElementById("btnReset").onclick=async(e)=>{const b=e.target;
 
 /* ---- background music: plays on load, loops forever, muteable (M / speaker button) ---- */
 const bgm=document.getElementById("bgm"), btnMute=document.getElementById("btnMute");
-bgm.volume=0.55;
+const BGM_VOL=0.55, BGM_DUCK_VOL=0.1;
+bgm.volume=BGM_VOL;
 bgm.muted = localStorage.getItem("air_muted")==="1";
 function paintMute(){ btnMute.textContent = bgm.muted ? "🔇" : "🔊"; }
 function tryPlayBgm(){ if(bgm.muted||!bgm.paused) return; const p=bgm.play(); if(p&&p.catch) p.catch(()=>{}); }
@@ -398,6 +403,25 @@ tryPlayBgm();
 // most browsers block autoplay-with-sound until the page has been interacted with —
 // retry on the host's first click/keypress so the music reliably kicks in.
 ["click","keydown","touchstart"].forEach(ev=>document.addEventListener(ev,tryPlayBgm));
+
+/* ---- duck the music under any round clip (question audio + reveal "twist" audio) ---- */
+let bgmFadeRAF=null;
+function fadeBgmTo(target,ms){
+  if(bgmFadeRAF) cancelAnimationFrame(bgmFadeRAF);
+  const start=bgm.volume, t0=performance.now();
+  (function step(now){
+    const p=Math.min(1,(now-t0)/ms);
+    bgm.volume = start + (target-start)*p;
+    bgmFadeRAF = p<1 ? requestAnimationFrame(step) : null;
+  })(t0);
+}
+const duckingAudios=new Set();
+function refreshDuck(){ fadeBgmTo(duckingAudios.size>0 ? BGM_DUCK_VOL : BGM_VOL, 450); }
+function isRoundClip(a){ return a && a.tagName==="AUDIO" && a.classList.contains("duckable"); }
+document.addEventListener("play",e=>{ if(isRoundClip(e.target)){ duckingAudios.add(e.target); refreshDuck(); } },true);
+function stopDucking(e){ if(isRoundClip(e.target) && duckingAudios.has(e.target)){ duckingAudios.delete(e.target); refreshDuck(); } }
+document.addEventListener("pause",stopDucking,true);
+document.addEventListener("ended",stopDucking,true);
 
 document.addEventListener("keydown",e=>{
   if(e.key===" "||e.key==="ArrowRight"){e.preventDefault();advance();}
