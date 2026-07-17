@@ -10,7 +10,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const PLAYER_URL = "https://shannonlangberg.github.io/aiorreal/";
 const ADMIN_PIN  = "futures2026";
 
-const TIMER_SECONDS = 20;   // default question length; rounds can override
+const TIMER_SECONDS = 15;   // default question length; rounds can override (server scoring matches)
 
 /* Branded placeholder for image rounds with no photo uploaded yet. */
 function ph(title, sub){

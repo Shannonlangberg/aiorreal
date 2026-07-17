@@ -114,12 +114,13 @@
   <button class="cbtn" id="btnReveal">Reveal</button>
   <button class="cbtn" id="btnBoard">Leaderboard</button>
   <a class="cbtn" id="btnAdmin" href="admin.html" target="_blank">✎ Questions</a>
+  <button class="cbtn" id="btnAuto" title="Reveal automatically when the timer hits zero">Auto-reveal: ON</button>
   <div class="spacer"></div>
   <div class="hint">←/→ or Space step · R reveal · L board · H hide</div>
   <button class="cbtn warn" id="btnReset">Reset</button>
 </div>
 
-<script src="config.js?v=4"></script>
+<script src="config.js?v=5"></script>
 <script>
 const H={"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
 async function sbGet(p){const r=await fetch(SUPABASE_URL+"/rest/v1/"+p,{headers:H});if(!r.ok)throw 0;return r.json();}
@@ -180,6 +181,7 @@ function mediaScreen(r){
 }
 function renderQuestion(r){
   if(!r){stage.innerHTML="";return;}
+  autoFiredFor=0;   // fresh question (or replay) -> allow auto-reveal again
   const mbadge = r.mode==="blitz"?`<span class="m">⚡ Blitz</span>`:(r.mode==="sudden_death"?`<span class="m sd">💀 Sudden Death</span>`:"");
   let middle="";
   if(r.interaction==="tapgrid"){
@@ -197,15 +199,25 @@ function renderQuestion(r){
     <div class="qhead">Round ${r.n} of ${ROUNDS.length} · ${esc(r.label)} ${mbadge}</div>
     <div class="qprompt">${esc(r.prompt)}</div>
     ${middle}
-    <div class="qmeta">${ringSVG()}<div class="votesin"><b id="vin">0</b> votes in</div></div></div>`;
+    <div class="qmeta">${ringSVG()}<div class="votesin"><b id="vin">0</b><span id="vintotal"></span> votes in</div></div></div>`;
 }
+let autoReveal = localStorage.getItem("air_autoreveal")!=="off";
+let autoFiredFor = 0;
 function refreshQuestion(r){
   const started=state.round_started_at?new Date(state.round_started_at).getTime():Date.now();
   const total=roundTimer(r)*1000, left=Math.max(0,total-(Date.now()-started));
   const num=document.getElementById("rnum"), rc=document.getElementById("rc");
   if(num) num.textContent=Math.ceil(left/1000);
   if(rc){const frac=left/total; rc.style.strokeDashoffset=(276.5*(1-frac)).toFixed(1);}
-  sbRpc("air_tally",{r:state.current_round}).then(t=>{const el=document.getElementById("vin");if(el&&t)el.textContent=Number(t.total||0).toLocaleString();}).catch(()=>{});
+  if(autoReveal && left<=0 && autoFiredFor!==r.n){ autoFiredFor=r.n; doReveal(); return; }
+  sbRpc("air_tally",{r:state.current_round}).then(t=>{
+    const el=document.getElementById("vin");
+    if(el&&t) el.textContent=Number(t.total||0).toLocaleString();
+  }).catch(()=>{});
+  sbRpc("air_player_count").then(c=>{
+    const el=document.getElementById("vintotal");
+    if(el&&Number(c)>0) el.textContent=" of "+Number(c).toLocaleString();
+  }).catch(()=>{});
 }
 
 async function renderReveal(r){
@@ -268,6 +280,11 @@ async function prev(){
 }
 async function doReveal(){ if(state.phase==="question"){ await setState({phase:"reveal"}); await poll(); } }
 async function doBoard(){ await setState({phase:"leaderboard"}); await poll(); }
+
+const autoBtn=document.getElementById("btnAuto");
+function paintAuto(){ autoBtn.textContent="Auto-reveal: "+(autoReveal?"ON":"OFF"); autoBtn.style.opacity=autoReveal?"1":".6"; }
+autoBtn.onclick=()=>{ autoReveal=!autoReveal; localStorage.setItem("air_autoreveal",autoReveal?"on":"off"); paintAuto(); };
+paintAuto();
 
 let resetArmed=false;
 document.getElementById("btnNext").onclick=advance;
