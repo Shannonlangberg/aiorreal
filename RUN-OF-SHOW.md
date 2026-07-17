@@ -6,15 +6,25 @@ right *and* fast; a live leaderboard crowns a winner. Built for ~500 players.
 
 ---
 
-## 🔗 The three links
+## 🔗 The four links
 
 | Who | Link |
 |-----|------|
 | **Big screen** (presenting laptop) | `https://futures-ai-or-real.netlify.app/screen.html` |
 | **Players' phones** (this is the QR on screen) | `https://futures-ai-or-real.netlify.app/` |
 | **Question editor / admin** (you only) | `https://futures-ai-or-real.netlify.app/admin.html` |
+| **Sound FX remote** (Seth's phone) | `https://futures-ai-or-real.netlify.app/soundboard.html` |
 
 Admin passphrase: **`futures2026`**.
+
+**Sound FX remote:** open the link above on Seth's phone. It's a separate page with 8 big
+buttons (correct sting, wrong buzzer, 10-sec countdown, drum roll, applause, winner fanfare,
+"oooh" reaction, sad-trombone wah-wah) — tapping one plays it on the *big screen* (not his
+phone), ducking the music automatically, same as the audio-round clips. It talks to the game
+over wifi with about half a second of lag, so it works from anywhere in the room, not just
+next to the laptop. Three of the eight (drum roll, applause, "oooh") are synthesized
+placeholders for now — they work, but real recorded clips would sound a lot better. Send me
+any replacement clips and I'll swap them in, same as the other audio.
 
 ---
 
