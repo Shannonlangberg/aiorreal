@@ -33,7 +33,7 @@ function ph(title, sub, c1, c2){
    type "image" -> a PHOTO on screen (AI-generated or a real photo?)
    answer: "ai" or "real"
    -------------------------------------------------------------------------- */
-const ROUNDS = [
+const STARTER_ROUNDS = [
   {
     n: 1, type: "story", difficulty: "Warm-up", label: "An inspirational quote",
     text: "Every sunrise is a quiet reminder that the universe believes in second chances — and so should you.",
@@ -95,6 +95,37 @@ const ROUNDS = [
     reveal: "REAL — William Shakespeare, Hamlet. 400 years old and still hits harder than any chatbot. Give yourselves a hand, Dream Team! 👏"
   }
 ];
+
+/* Passphrase for the admin editor (soft gate — deters casual access). */
+const ADMIN_PIN = "futures2026";
+
+/* Live rounds. Starts as the built-in set; loadRounds() swaps in the
+   admin-edited questions from Supabase if any exist. */
+let ROUNDS = STARTER_ROUNDS.slice();
+
+async function loadRounds(){
+  try{
+    const rows = await fetch(
+      SUPABASE_URL + "/rest/v1/air_rounds?active=eq.true&order=ord.asc&select=*",
+      { headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY } }
+    ).then(r => r.ok ? r.json() : []);
+    if (Array.isArray(rows) && rows.length){
+      ROUNDS = rows.map((r, i) => ({
+        n: i + 1,
+        type: r.type,
+        label: r.label || "",
+        difficulty: r.difficulty || "",
+        text: r.body || "",
+        answer: r.answer,
+        reveal: r.reveal || "",
+        img: r.type === "image"
+          ? (r.image_url || ph("Round " + (i + 1), "No photo yet — add one in the admin page", "#5d1fec", "#26105e"))
+          : undefined
+      }));
+    }
+  }catch(e){ /* keep the built-in starter set */ }
+  return ROUNDS;
+}
 
 /* Scoring: correct answers earn a base plus a speed bonus. Wrong = 0. */
 function scoreFor(isCorrect, msTaken) {

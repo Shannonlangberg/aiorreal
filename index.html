@@ -318,9 +318,7 @@ async function poll(){
   }
 }
 
-render();
-poll();
-setInterval(poll, 1500);
+(async()=>{ await loadRounds(); render(); poll(); setInterval(poll, 1500); })();
 </script>
 </body>
 </html>

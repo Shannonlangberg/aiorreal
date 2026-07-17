@@ -122,11 +122,13 @@
 
 <div id="ctrl">
   <div class="status" id="status">—</div>
+  <button class="cbtn" id="btnPrev" title="Back one step">◀</button>
   <button class="cbtn primary" id="btnNext">Start ▶</button>
   <button class="cbtn" id="btnReveal">Reveal</button>
   <button class="cbtn" id="btnBoard">Leaderboard</button>
+  <a class="cbtn" id="btnAdmin" href="admin.html" target="_blank" style="text-decoration:none">✎ Questions</a>
   <div class="spacer"></div>
-  <div class="hint">Space/→ advance · R reveal · L board · H hide bar</div>
+  <div class="hint">←/→ or Space step · R reveal · L board · H hide bar</div>
   <button class="cbtn warn" id="btnReset">Reset</button>
 </div>
 
@@ -198,8 +200,7 @@ function renderQuestion(r){
       <div class="qtitle"><span class="a">AI or </span><span class="b grad">Real?</span></div>
       <div class="qcard">${body}</div>
       <div class="qmeta">${ringSVG()}<div class="votesin"><b id="vin">0</b> votes in</div></div>
-    </div>
-    <div class="labelrow"><div class="ai">← think AI?</div><div class="real">think REAL? →</div></div>`;
+    </div>`;
 }
 function refreshQuestion(r){
   const started=state.round_started_at?new Date(state.round_started_at).getTime():Date.now();
@@ -281,9 +282,21 @@ async function advance(){
 }
 async function doReveal(){ if(state.phase==="question"){ await setState({phase:"reveal"}); await poll(); } }
 async function doBoard(){ await setState({phase:"leaderboard"}); await poll(); }
+async function prev(){
+  const p=state.phase, n=state.current_round;
+  if(p==="finished"){ await setState({phase:"leaderboard"}); }
+  else if(p==="leaderboard"){ await setState({phase:"reveal", current_round:ROUNDS.length}); }
+  else if(p==="reveal"){ await setState({phase:"question", round_started_at:new Date().toISOString()}); }
+  else if(p==="question"){
+    if(n>1) await setState({phase:"reveal", current_round:n-1});
+    else await setState({phase:"lobby", current_round:0, round_started_at:null});
+  }
+  await poll();
+}
 
 let resetArmed=false;
 document.getElementById("btnNext").onclick=advance;
+document.getElementById("btnPrev").onclick=prev;
 document.getElementById("btnReveal").onclick=doReveal;
 document.getElementById("btnBoard").onclick=doBoard;
 document.getElementById("btnReset").onclick=async(e)=>{
@@ -294,6 +307,7 @@ document.getElementById("btnReset").onclick=async(e)=>{
 };
 document.addEventListener("keydown",e=>{
   if(e.key===" "||e.key==="ArrowRight"){ e.preventDefault(); advance(); }
+  else if(e.key==="ArrowLeft"){ e.preventDefault(); prev(); }
   else if(e.key.toLowerCase()==="r"){ doReveal(); }
   else if(e.key.toLowerCase()==="l"){ doBoard(); }
   else if(e.key.toLowerCase()==="h"){ document.getElementById("ctrl").classList.toggle("hidden"); }
@@ -306,8 +320,7 @@ async function poll(){
   }catch(e){}
   render();
 }
-render(); poll();
-setInterval(poll, 1200);
+(async()=>{ await loadRounds(); render(); poll(); setInterval(poll, 1200); })();
 </script>
 </body>
 </html>

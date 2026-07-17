@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI or Real — Question Editor (Futures)</title>
+<style>
+  @font-face{font-family:'Gal Gothic';src:url('assets/fonts/GalGothic-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+  @font-face{font-family:'Rhymes Display';src:url('assets/fonts/RhymesDisplay-LightItalic.woff2') format('woff2');font-weight:300;font-style:italic;font-display:swap}
+  :root{
+    --orange:#ff8432; --pink:#e444b9; --violet:#5d1fec; --lemon:#ffff5f; --sky:#62b4ff;
+    --ink:#fff; --dim:rgba(255,255,255,.6); --line:rgba(255,255,255,.14);
+    --sans:'Gal Gothic',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    --serif:'Rhymes Display',Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--sans);color:#fff;background:radial-gradient(130% 80% at 50% -10%, #3a1360 0%, #1e0a3d 46%, #0c041d 100%);min-height:100vh}
+  .wrap{max-width:860px;margin:0 auto;padding:26px 18px 80px}
+  .head{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+  .head img{height:24px}
+  .head .t{font-family:var(--serif);font-style:italic;font-size:30px;color:var(--orange)}
+  .muted{color:var(--dim);font-size:13px;line-height:1.5}
+  .panel{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:16px;padding:16px;margin:16px 0}
+  .panel h3{margin:0 0 10px;font-weight:400;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--lemon)}
+  .rowflex{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .btn{padding:10px 16px;border:none;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:400;color:#fff;cursor:pointer;background:rgba(255,255,255,.14)}
+  .btn.p{background:linear-gradient(100deg,var(--violet),var(--pink))}
+  .btn.o{background:linear-gradient(100deg,#ff9a4d,#e2560f)}
+  .btn.warn{background:rgba(255,90,70,.24);color:#ffc4b8}
+  .btn:active{transform:scale(.98)}
+  .btn.sm{padding:7px 11px;font-size:13px}
+  a.btn{text-decoration:none;display:inline-block}
+  .status b{color:#fff}
+  input,textarea,select{font-family:var(--sans);font-size:15px;color:#fff;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;outline:none}
+  input:focus,textarea:focus,select:focus{border-color:var(--orange)}
+  textarea{min-height:70px;resize:vertical;line-height:1.4}
+  label.f{display:block;font-size:12px;color:var(--dim);margin:10px 0 4px;letter-spacing:.04em;text-transform:uppercase}
+  select option{color:#000}
+  .card{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0}
+  .card.dirty{border-color:var(--lemon)}
+  .card .chead{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .card .rn{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--orange)}
+  .card .spacer{flex:1}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .seg button{padding:9px 16px;border:none;background:transparent;color:var(--dim);font-family:var(--sans);font-size:14px;cursor:pointer}
+  .seg button.on.ai{background:var(--violet);color:#fff}
+  .seg button.on.real{background:var(--orange);color:#fff}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .prev{width:100%;max-height:180px;object-fit:contain;border-radius:10px;border:1px solid var(--line);margin-top:8px;background:#0c041d}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#111;border:1px solid var(--line);padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .2s;z-index:9}
+  .toast.show{opacity:1}
+  .gate{max-width:360px;margin:16vh auto;text-align:center}
+  .hide{display:none}
+  @media(max-width:560px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- gate -->
+  <div id="gate" class="gate">
+    <div class="head" style="justify-content:center"><img src="assets/futures-wordmark-white.png" alt="Futures"></div>
+    <div class="t" style="font-family:var(--serif);font-style:italic;font-size:34px;color:var(--orange);margin:10px 0">Question Editor</div>
+    <p class="muted">Enter the editor passphrase to continue.</p>
+    <input id="pin" type="password" placeholder="Passphrase" style="margin:12px 0">
+    <button class="btn p" id="pinBtn" style="width:100%">Unlock</button>
+  </div>
+
+  <!-- app -->
+  <div id="app" class="hide">
+    <div class="head">
+      <img src="assets/futures-wordmark-white.png" alt="Futures">
+      <div class="t">Question Editor</div>
+    </div>
+    <p class="muted">Add, edit, reorder and delete questions. Changes save to your game instantly — refresh the big screen after editing.</p>
+
+    <div class="panel">
+      <h3>Game control</h3>
+      <div class="rowflex">
+        <div class="status muted" id="gstatus" style="min-width:200px">Phase: <b>…</b></div>
+        <a class="btn o" href="screen.html" target="_blank">▶ Open big screen</a>
+        <a class="btn" href="index.html" target="_blank">📱 Open player page</a>
+        <button class="btn sm" id="copyBtn">Copy player link</button>
+        <button class="btn warn sm" id="resetBtn">Reset game (clears players)</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="rowflex">
+        <h3 style="margin:0">Questions <span id="count" class="muted"></span></h3>
+        <div class="spacer" style="flex:1"></div>
+        <button class="btn sm" id="importBtn">Import 10 starters</button>
+        <button class="btn p sm" id="addBtn">+ Add question</button>
+      </div>
+    </div>
+
+    <div id="list"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script>
+const KEY_H = { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" };
+const toast=(m)=>{const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800);};
+const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- gate ---------- */
+function showApp(){ document.getElementById("gate").classList.add("hide"); document.getElementById("app").classList.remove("hide"); init(); }
+(function gate(){
+  if(localStorage.getItem("air_admin")===ADMIN_PIN){ showApp(); return; }
+  const go=()=>{ if(document.getElementById("pin").value===ADMIN_PIN){ localStorage.setItem("air_admin",ADMIN_PIN); showApp(); } else toast("Wrong passphrase"); };
+  document.getElementById("pinBtn").onclick=go;
+  document.getElementById("pin").addEventListener("keydown",e=>{if(e.key==="Enter")go();});
+})();
+
+/* ---------- data ---------- */
+let rounds=[];
+async function fetchRounds(){
+  const r=await fetch(SUPABASE_URL+"/rest/v1/air_rounds?order=ord.asc&select=*",{headers:KEY_H});
+  rounds=await r.json();
+}
+async function patchRound(id,fields){
+  fields.updated_at=new Date().toISOString();
+  const r=await fetch(SUPABASE_URL+"/rest/v1/air_rounds?id=eq."+id,{method:"PATCH",headers:{...KEY_H,Prefer:"return=minimal"},body:JSON.stringify(fields)});
+  if(!r.ok) throw new Error("save "+r.status);
+}
+async function insertRound(row){
+  const r=await fetch(SUPABASE_URL+"/rest/v1/air_rounds",{method:"POST",headers:{...KEY_H,Prefer:"return=representation"},body:JSON.stringify(row)});
+  return (await r.json())[0];
+}
+async function deleteRound(id){
+  await fetch(SUPABASE_URL+"/rest/v1/air_rounds?id=eq."+id,{method:"DELETE",headers:KEY_H});
+}
+
+/* ---------- photo upload (browser -> Supabase Storage) ---------- */
+async function uploadPhoto(file){
+  const clean=file.name.toLowerCase().replace(/[^a-z0-9.]+/g,"-");
+  const path="rounds/"+Date.now()+"-"+clean;
+  const r=await fetch(SUPABASE_URL+"/storage/v1/object/game/"+path,{
+    method:"POST", headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":file.type||"image/jpeg","x-upsert":"true"}, body:file
+  });
+  if(!r.ok) throw new Error("upload "+r.status+" "+(await r.text()).slice(0,120));
+  return SUPABASE_URL+"/storage/v1/object/public/game/"+path;
+}
+
+/* ---------- render ---------- */
+const list=document.getElementById("list");
+function render(){
+  document.getElementById("count").textContent = rounds.length ? "("+rounds.length+")" : "(none yet)";
+  document.getElementById("importBtn").style.display = rounds.length ? "none" : "";
+  list.innerHTML="";
+  rounds.forEach((r,i)=>list.appendChild(card(r,i)));
+}
+function card(r,i){
+  const el=document.createElement("div"); el.className="card"; el.dataset.id=r.id;
+  el.innerHTML=`
+    <div class="chead">
+      <span class="rn">Round ${i+1}</span>
+      <span class="muted">${r.type==="image"?"🖼 image":"✎ text"}</span>
+      <div class="spacer"></div>
+      <button class="btn sm" data-a="up" ${i===0?"disabled":""}>↑</button>
+      <button class="btn sm" data-a="down" ${i===rounds.length-1?"disabled":""}>↓</button>
+      <label class="muted" style="display:flex;gap:5px;align-items:center;text-transform:none"><input type="checkbox" style="width:auto" data-f="active" ${r.active?"checked":""}> live</label>
+      <button class="btn warn sm" data-a="del">Delete</button>
+    </div>
+    <div class="two">
+      <div><label class="f">Type</label>
+        <select data-f="type"><option value="story" ${r.type==="story"?"selected":""}>Text (quote / story)</option><option value="image" ${r.type==="image"?"selected":""}>Image (photo)</option></select></div>
+      <div><label class="f">Answer</label>
+        <div class="seg"><button data-a="ai" class="${r.answer==="ai"?"on ai":""}">AI</button><button data-a="real" class="${r.answer==="real"?"on real":""}">REAL</button></div></div>
+    </div>
+    <div class="two">
+      <div><label class="f">Label (shown on screen)</label><input data-f="label" value="${esc(r.label)}" placeholder="e.g. An inspirational quote"></div>
+      <div><label class="f">Difficulty (optional)</label><input data-f="difficulty" value="${esc(r.difficulty)}" placeholder="Easy / Medium / Hard"></div>
+    </div>
+    <div data-blk="story" class="${r.type==="image"?"hide":""}"><label class="f">The text the crowd judges</label><textarea data-f="body" placeholder="Paste the quote / lyric / story…">${esc(r.body)}</textarea></div>
+    <div data-blk="image" class="${r.type==="story"?"hide":""}">
+      <label class="f">Photo</label>
+      <div class="rowflex"><input type="file" accept="image/*" data-a="file" style="width:auto"><span class="muted" data-el="upstat"></span></div>
+      ${r.image_url?`<img class="prev" src="${esc(r.image_url)}">`:`<div class="muted" style="margin-top:6px">No photo yet.</div>`}
+    </div>
+    <label class="f">Reveal (the fun fact shown after)</label><textarea data-f="reveal" placeholder="Why it's AI or real…">${esc(r.reveal)}</textarea>
+    <div class="rowflex" style="margin-top:12px">
+      <button class="btn p sm" data-a="save">Save</button>
+      <span class="muted" data-el="savestat"></span>
+    </div>`;
+
+  const mark=()=>el.classList.add("dirty");
+  el.querySelectorAll("[data-f]").forEach(inp=>inp.addEventListener("input",mark));
+  // type toggle shows/hides blocks
+  el.querySelector('[data-f="type"]').addEventListener("change",e=>{
+    const t=e.target.value;
+    el.querySelector('[data-blk="story"]').classList.toggle("hide",t!=="story");
+    el.querySelector('[data-blk="image"]').classList.toggle("hide",t!=="image");
+    mark();
+  });
+  // answer segmented
+  el.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{
+    el.querySelectorAll('.seg button').forEach(x=>x.className="");
+    b.className = "on "+b.dataset.a; el.dataset.answer=b.dataset.a; mark();
+  });
+  el.dataset.answer=r.answer;
+  // photo upload
+  const fileInp=el.querySelector('[data-a="file"]');
+  if(fileInp) fileInp.onchange=async()=>{
+    const f=fileInp.files[0]; if(!f) return;
+    const st=el.querySelector('[data-el="upstat"]'); st.textContent="Uploading…";
+    try{ const url=await uploadPhoto(f); await patchRound(r.id,{image_url:url,type:"image"}); st.textContent="Uploaded ✓"; await reload(); toast("Photo added"); }
+    catch(err){ st.textContent="Upload failed"; toast(String(err.message||err)); }
+  };
+  // actions
+  el.querySelector('[data-a="save"]').onclick=async()=>{
+    const g=s=>el.querySelector('[data-f="'+s+'"]');
+    const fields={ type:g("type").value, label:g("label").value, difficulty:g("difficulty").value,
+      body:g("body").value, reveal:g("reveal").value, answer:el.dataset.answer, active:g("active").checked };
+    try{ await patchRound(r.id,fields); el.classList.remove("dirty"); el.querySelector('[data-el="savestat"]').textContent="Saved ✓"; toast("Saved"); await reload(); }
+    catch(e){ toast("Save failed"); }
+  };
+  el.querySelector('[data-a="del"]').onclick=async()=>{
+    if(!confirm("Delete this question?")) return;
+    await deleteRound(r.id); await reload(); toast("Deleted");
+  };
+  el.querySelector('[data-a="up"]').onclick=()=>move(i,-1);
+  el.querySelector('[data-a="down"]').onclick=()=>move(i,1);
+  return el;
+}
+
+async function move(i,dir){
+  const j=i+dir; if(j<0||j>=rounds.length) return;
+  const a=rounds[i], b=rounds[j];
+  await patchRound(a.id,{ord:b.ord}); await patchRound(b.id,{ord:a.ord});
+  await reload();
+}
+async function reload(){ await fetchRounds(); render(); }
+
+/* ---------- toolbar ---------- */
+async function init(){
+  await reload();
+  pollGame();
+  setInterval(pollGame,2000);
+  document.getElementById("addBtn").onclick=async()=>{
+    const maxOrd=rounds.reduce((m,r)=>Math.max(m,r.ord),0);
+    await insertRound({ord:maxOrd+1,type:"story",label:"New question",answer:"ai",body:"",reveal:"",active:true});
+    await reload(); toast("Question added"); window.scrollTo(0,document.body.scrollHeight);
+  };
+  document.getElementById("importBtn").onclick=async()=>{
+    if(rounds.length && !confirm("Import the 10 starter questions on top of what's here?")) return;
+    for(let k=0;k<STARTER_ROUNDS.length;k++){
+      const s=STARTER_ROUNDS[k];
+      await insertRound({ord:k+1,type:s.type,label:s.label||"",difficulty:s.difficulty||"",
+        body:s.text||"",image_url:"",answer:s.answer,reveal:s.reveal||"",active:true});
+    }
+    await reload(); toast("Imported 10 starter questions");
+  };
+  document.getElementById("copyBtn").onclick=()=>{ navigator.clipboard.writeText(PLAYER_URL).then(()=>toast("Player link copied")); };
+  let armed=false;
+  document.getElementById("resetBtn").onclick=async(e)=>{
+    if(!armed){ armed=true; e.target.textContent="Sure? Click again"; setTimeout(()=>{armed=false;e.target.textContent="Reset game (clears players)";},3000); return; }
+    armed=false; e.target.textContent="Reset game (clears players)";
+    await fetch(SUPABASE_URL+"/rest/v1/rpc/air_reset",{method:"POST",headers:KEY_H,body:"{}"});
+    toast("Game reset to lobby");
+  };
+}
+async function pollGame(){
+  try{
+    const r=await fetch(SUPABASE_URL+"/rest/v1/air_state?id=eq.1&select=phase,current_round",{headers:KEY_H});
+    const s=(await r.json())[0]||{};
+    const map={lobby:"Lobby (players joining)",question:"Question OPEN",reveal:"Reveal",leaderboard:"Leaderboard",finished:"Finished"};
+    document.getElementById("gstatus").innerHTML="Phase: <b>"+(map[s.phase]||s.phase||"—")+"</b>"+(s.current_round?" · Round <b>"+s.current_round+"</b>":"");
+  }catch(e){}
+}
+</script>
+</body>
+</html>
