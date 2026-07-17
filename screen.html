@@ -30,9 +30,9 @@
   .brandbar{position:fixed;top:2.6vh;left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:center;gap:16px}
   .brandbar img{height:2.3vh;opacity:.95}
   .brandbar .tag{letter-spacing:.22em;text-transform:uppercase;font-size:1.3vh;color:var(--dim)}
-  #stage{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7vh 4vw 8vh;text-align:center}
+  #stage{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;padding:9vh 4vw 9vh;text-align:center;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .grad{background:linear-gradient(100deg,var(--orange),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .fade{animation:fade .5s ease}@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .fade{animation:fade .5s ease;margin:auto 0;flex:none;width:100%}@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   .pop{animation:pop .55s cubic-bezier(.2,1.4,.4,1)}@keyframes pop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
 
   .tlock .a{display:block;font-family:var(--sans);font-weight:400;font-size:7vh;letter-spacing:-.01em}
@@ -56,8 +56,10 @@
   .tapwrap .lab{position:absolute;width:5vh;height:5vh;border-radius:1vh;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:2.6vh}
   audio{margin-top:2.4vh;width:56vw;max-width:760px;filter:hue-rotate(12deg)}
   /* image-pick: multiple uploaded photos to choose between */
-  .imgopts{display:flex;flex-wrap:wrap;gap:2vh;justify-content:center;margin-top:2.6vh;max-width:84vw}
-  .imgopt{position:relative;width:min(22vh,38vw);height:min(22vh,38vw);border-radius:1.6vh;overflow:hidden;border:2px solid rgba(255,255,255,.18);box-shadow:0 20px 50px -20px rgba(0,0,0,.75);transition:opacity .3s,border-color .3s}
+  .imgopts{display:flex;flex-wrap:wrap;gap:2.6vh;justify-content:center;margin-top:2.6vh;max-width:90vw}
+  .imgopt{position:relative;width:min(28vh,42vw);height:min(28vh,42vw);border-radius:1.6vh;overflow:hidden;border:2px solid rgba(255,255,255,.18);box-shadow:0 20px 50px -20px rgba(0,0,0,.75);transition:opacity .3s,border-color .3s}
+  .imgopts[data-n="2"] .imgopt{width:min(46vh,40vw);height:min(46vh,40vw)}
+  .imgopts[data-n="3"] .imgopt{width:min(34vh,30vw);height:min(34vh,30vw)}
   .imgopt img{width:100%;height:100%;object-fit:cover;display:block}
   .imgopt .lab{position:absolute;top:1vh;left:1vh;width:4vh;height:4vh;border-radius:1vh;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:2.2vh}
   .imgopt .pct{position:absolute;right:1vh;bottom:1vh;padding:.5vh 1.2vh;border-radius:999px;background:rgba(0,0,0,.65);font-size:1.8vh}
@@ -118,7 +120,7 @@
     .brandbar{top:1.6vh}
     .brandbar .tag{display:none}
     .brandbar img{height:1.8vh}
-    #stage{padding:11vh 4vw 34vh;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    #stage{padding:11vh 4vw 34vh}
     .tlock .a{font-size:4.6vh}.tlock .b{font-size:9.5vh}
     .lobby-sub{font-size:2.4vh;margin-top:1.4vh}
     .qrbox{margin-top:2vh;padding:1.6vh}
@@ -240,7 +242,7 @@ function renderQuestion(r){
       <div class="audionote">Tap a quadrant on your phone</div>`;
   } else if(r.interaction==="imgpick"){
     const tiles = r.options.map((o,i)=>`<div class="imgopt"><span class="lab">${LETTERS[i]}</span><img src="${r.option_images[i]||''}" alt="${esc(o)}"></div>`).join("");
-    middle=`<div class="imgopts">${tiles}</div>`;
+    middle=`<div class="imgopts" data-n="${r.options.length}">${tiles}</div>`;
   } else {
     const codey = /\n/.test(r.content) && /[=;{}()]/.test(r.content);
     const body = r.content?`<div class="qbody ${codey?'code':''}">${esc(r.content)}</div>`:``;
@@ -287,7 +289,7 @@ async function renderReveal(r){
       const c=Number(counts[String(i)])||0; const pct=total?Math.round(c/total*100):0;
       tiles+=`<div class="imgopt ${i===ci?'right':'dim'}"><span class="lab">${LETTERS[i]}</span><img src="${r.option_images[i]||''}" alt=""><span class="pct">${pct}%</span></div>`;
     }
-    tallyBlock=`<div class="imgopts">${tiles}</div>`;
+    tallyBlock=`<div class="imgopts" data-n="${n}">${tiles}</div>`;
   } else {
     let rows="";
     for(let i=0;i<n;i++){
