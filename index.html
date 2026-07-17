@@ -106,12 +106,9 @@ const LS = {
   get player(){ try{return JSON.parse(localStorage.getItem("air_player"))}catch(e){return null} },
   set player(v){ localStorage.setItem("air_player", JSON.stringify(v)) },
   get answers(){ try{return JSON.parse(localStorage.getItem("air_answers"))||{}}catch(e){return {}} },
-  set answers(v){ localStorage.setItem("air_answers", JSON.stringify(v)) },
-  get session(){ return localStorage.getItem("air_session") },
-  set session(v){ localStorage.setItem("air_session", v) }
+  set answers(v){ localStorage.setItem("air_answers", JSON.stringify(v)) }
 };
 let player=LS.player, answers=LS.answers;
-let lastSession=LS.session;
 function forgetMe(){
   player=null; answers={}; lastRenderKey="";
   localStorage.removeItem("air_player"); localStorage.removeItem("air_answers");
@@ -144,7 +141,7 @@ function renderJoin(){
     const name=(nm.value||"").trim(); if(!name) return;
     b.disabled=true; b.textContent="Joining…";
     try{ const r=await sbInsert("air_players",{name}); const d=await r.json();
-      if(!r.ok||!d[0]) throw 0; player={id:d[0].id,name}; LS.player=player; lastRenderKey=""; render();
+      if(!r.ok||!d[0]) throw 0; player={id:d[0].id,name,session:state.session_id}; LS.player=player; lastRenderKey=""; render();
     }catch(e){ b.disabled=false; b.textContent="Let's go →"; alert("Couldn't join — check signal and tap again."); }
   };
   b.onclick=go; nm.addEventListener("keydown",e=>{if(e.key==="Enter")go();});
@@ -300,11 +297,10 @@ async function poll(){
   try{
     const rows=await sbGet("air_state?id=eq.1&select=phase,current_round,round_started_at,session_id");
     if(rows&&rows[0]){ const s=rows[0];
-      if(s.session_id && lastSession && s.session_id!==lastSession){
-        // host hit Reset — this phone's name/score/answers no longer exist server-side, so forget them and rejoin fresh
+      if(player && s.session_id && player.session!==s.session_id){
+        // host hit Reset (or this is stale data from a previous game) — forget this phone's identity and rejoin fresh
         forgetMe();
       }
-      if(s.session_id){ lastSession=s.session_id; LS.session=s.session_id; }
       const changed=s.phase!==state.phase||s.current_round!==state.current_round||s.round_started_at!==state.round_started_at;
       state=s; if(changed) lastRenderKey=""; render(); }
     fails=0; conn.classList.remove("bad"); connTxt.textContent="live";
