@@ -177,8 +177,7 @@ function renderQuestion(){
   if(!round){ renderLobby(); return; }
   const answered=answers[round.n];
   const key="q"+round.n+(answered?"-done":"-open");
-  if(lastRenderKey===key && answered) return;      // don't re-render locked state
-  if(lastRenderKey.startsWith("q"+round.n) && !answered && lastRenderKey===key) {/*keep timer live*/}
+  if(lastRenderKey===key) return;      // already showing this exact state — don't redraw (was causing flashing)
   lastRenderKey=key;
 
   const body = round.type==="image"
