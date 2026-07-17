@@ -1,0 +1,5 @@
+# local build/scratch — not part of the published site
+dist/
+images/
+netlify.toml
+play_function.ts
