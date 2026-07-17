@@ -6,112 +6,99 @@
 <title>AI or Real — Big Screen (Futures)</title>
 <style>
   @font-face{font-family:'Gal Gothic';src:url('assets/fonts/GalGothic-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
-  @font-face{font-family:'Gal Gothic';src:url('assets/fonts/GalGothic-Light.woff2') format('woff2');font-weight:300;font-display:swap}
   @font-face{font-family:'Rhymes Display';src:url('assets/fonts/RhymesDisplay-Light.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap}
   @font-face{font-family:'Rhymes Display';src:url('assets/fonts/RhymesDisplay-LightItalic.woff2') format('woff2');font-weight:300;font-style:italic;font-display:swap}
   :root{
-    --copper:#c45236; --orange:#ff8432; --pink:#e444b9; --violet:#5d1fec; --sky:#62b4ff;
-    --lemon:#ffff5f; --ginger:#ac9b25; --sage:#c5c6a4; --gray:#50482e;
-    --ai:#5d1fec; --real:#ff8432; --ink:#fff; --dim:rgba(255,255,255,.62);
+    --orange:#ff8432; --pink:#e444b9; --violet:#5d1fec; --sky:#62b4ff; --lemon:#ffff5f; --gray:#50482e;
+    --ink:#fff; --dim:rgba(255,255,255,.62);
     --sans:'Gal Gothic',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
     --serif:'Rhymes Display',Georgia,"Times New Roman",serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;overflow:hidden;font-family:var(--sans);color:#fff}
-  body{background:radial-gradient(130% 100% at 50% -10%, #3a1360 0%, #1e0a3d 46%, #0c041d 100%)}
-  /* ---------- animated sunburst ---------- */
+  body{background:radial-gradient(130% 100% at 50% -10%, #3a1360 0%, #1e0a3d 46%, #0c041d 100%);transition:background .5s}
+  body[data-mode="sudden_death"]{background:radial-gradient(130% 100% at 50% -10%, #5a1020 0%, #2a0710 50%, #0c041d 100%)}
   #bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
   #bg .fan{position:absolute;left:50%;top:52%;width:280vmax;height:280vmax;transform:translate(-50%,-50%);
-    background:repeating-conic-gradient(from 0deg,
-      rgba(255,132,50,.20) 0deg 5deg, transparent 5deg 11deg,
-      rgba(228,68,185,.15) 11deg 16deg, transparent 16deg 24deg,
-      rgba(93,31,236,.14) 24deg 29deg, transparent 29deg 38deg);
-    animation:spin 150s linear infinite; opacity:.6; transition:opacity .6s}
-  body[data-dim="1"] #bg .fan{opacity:.14}
+    background:repeating-conic-gradient(from 0deg,rgba(255,132,50,.20) 0deg 5deg,transparent 5deg 11deg,rgba(228,68,185,.15) 11deg 16deg,transparent 16deg 24deg,rgba(93,31,236,.14) 24deg 29deg,transparent 29deg 38deg);
+    animation:spin 150s linear infinite;opacity:.6;transition:opacity .6s}
+  body[data-dim="1"] #bg .fan{opacity:.12}
   @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
-  /* burst behind reveal */
   #burst{position:fixed;inset:0;z-index:0;display:none;align-items:center;justify-content:center;pointer-events:none}
-  #burst .b{width:200vmax;height:200vmax;border-radius:50%;
-    background:repeating-conic-gradient(from 0deg, var(--bc,#ff8432) 0deg 6deg, transparent 6deg 14deg);
-    opacity:.30; animation:burstin .7s cubic-bezier(.2,1,.3,1), spin 60s linear infinite}
-  @keyframes burstin{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:.30}}
-
-  .brandbar{position:fixed;top:3.2vh;left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:center;gap:16px}
-  .brandbar img{height:2.4vh;opacity:.95}
-  .brandbar .tag{font-weight:400;letter-spacing:.22em;text-transform:uppercase;font-size:1.4vh;color:var(--dim)}
-  #stage{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6vh 5vw;text-align:center}
+  #burst .b{width:200vmax;height:200vmax;border-radius:50%;background:repeating-conic-gradient(from 0deg,var(--bc,#ff8432) 0deg 6deg,transparent 6deg 14deg);opacity:.28;animation:burstin .7s cubic-bezier(.2,1,.3,1),spin 60s linear infinite}
+  @keyframes burstin{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:.28}}
+  .brandbar{position:fixed;top:2.6vh;left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:center;gap:16px}
+  .brandbar img{height:2.3vh;opacity:.95}
+  .brandbar .tag{letter-spacing:.22em;text-transform:uppercase;font-size:1.3vh;color:var(--dim)}
+  #stage{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7vh 4vw 8vh;text-align:center}
   .grad{background:linear-gradient(100deg,var(--orange),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
   .fade{animation:fade .5s ease}@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   .pop{animation:pop .55s cubic-bezier(.2,1.4,.4,1)}@keyframes pop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
 
-  /* title lockup */
-  .tlock{line-height:.82}
   .tlock .a{display:block;font-family:var(--sans);font-weight:400;font-size:7vh;letter-spacing:-.01em}
   .tlock .b{display:block;font-family:var(--serif);font-style:italic;font-weight:300;font-size:15vh;line-height:.82}
-
-  /* lobby */
-  .lobby-sub{font-family:var(--serif);font-weight:300;font-size:3.4vh;color:#fff;margin-top:2vh;opacity:.9}
-  .qrbox{margin-top:3.4vh;background:#fff;padding:2.2vh;border-radius:2.4vh;box-shadow:0 24px 70px -20px rgba(0,0,0,.7)}
-  .qrbox img{display:block;width:34vh;height:34vh;image-rendering:pixelated}
-  .joinurl{margin-top:2.2vh;font-size:2.6vh;font-weight:400;color:var(--dim)}
-  .count{margin-top:2.8vh;font-size:6vh;font-weight:400;color:var(--lemon);line-height:1}
-  .count small{font-family:var(--sans);font-size:2vh;color:var(--dim);font-weight:400;display:block;letter-spacing:.16em;text-transform:uppercase;margin-top:.6vh}
+  .lobby-sub{font-family:var(--serif);font-weight:300;font-size:3.2vh;margin-top:2vh;opacity:.9}
+  .qrbox{margin-top:3vh;background:#fff;padding:2.2vh;border-radius:2.4vh;box-shadow:0 24px 70px -20px rgba(0,0,0,.7)}
+  .qrbox img{display:block;width:32vh;height:32vh;image-rendering:pixelated}
+  .joinurl{margin-top:2vh;font-size:2.4vh;color:var(--dim)}
+  .count{margin-top:2.4vh;font-size:6vh;color:var(--lemon);line-height:1}
+  .count small{font-size:2vh;color:var(--dim);display:block;letter-spacing:.16em;text-transform:uppercase;margin-top:.6vh}
 
   /* question */
-  .qhead{font-size:2.2vh;letter-spacing:.18em;text-transform:uppercase;color:var(--lemon);font-weight:400}
-  .qtitle{margin:.6vh 0 2.6vh;line-height:.8}
-  .qtitle .a{font-family:var(--sans);font-weight:400;font-size:4vh;letter-spacing:.01em;display:inline}
-  .qtitle .b{font-family:var(--serif);font-style:italic;font-weight:300;font-size:9vh}
-  .qcard{max-width:72vw}
-  .qimg{max-height:54vh;max-width:78vw;border-radius:2vh;border:2px solid rgba(255,255,255,.18);box-shadow:0 24px 70px -24px rgba(0,0,0,.8)}
-  .qstory{font-family:var(--serif);font-weight:300;font-size:5.4vh;line-height:1.3;max-width:64vw}
-  .qmeta{display:flex;align-items:center;justify-content:center;gap:3vw;margin-top:3.2vh}
-  .ring{position:relative;width:12vh;height:12vh}
-  .ring svg{transform:rotate(-90deg)}
-  .ring .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5vh;font-weight:400}
-  .votesin{font-size:3.2vh;font-weight:400;color:var(--dim)}
-  .votesin b{color:#fff;font-size:5vh}
-  .labelrow{position:fixed;bottom:11vh;left:0;right:0;z-index:2;display:flex;justify-content:center;gap:7vw;font-weight:400;font-size:2.8vh;opacity:.7}
-  .labelrow .ai{color:#b79bff}.labelrow .real{color:var(--orange)}
+  .qhead{font-size:2vh;letter-spacing:.16em;text-transform:uppercase;color:var(--lemon)}
+  .qhead .m{margin-left:1.4vh;padding:.4vh 1.4vh;border-radius:999px;background:rgba(255,255,95,.16)}
+  .qhead .m.sd{background:rgba(255,80,70,.28);color:#ffb3ab}
+  .qprompt{font-size:4.2vh;font-weight:400;line-height:1.12;max-width:80vw;margin:1.2vh auto 0}
+  .qbody{font-family:var(--serif);font-weight:300;font-size:4vh;line-height:1.3;max-width:70vw;margin:2vh auto 0;white-space:pre-wrap}
+  .qbody.code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:2.6vh;text-align:left;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.14);border-radius:1.4vh;padding:2vh 2.4vh;display:inline-block}
+  .qimg{max-height:44vh;max-width:74vw;border-radius:2vh;border:2px solid rgba(255,255,255,.18);box-shadow:0 24px 70px -24px rgba(0,0,0,.8);margin-top:2vh}
+  .tapwrap{position:relative;display:inline-block;margin-top:2vh}
+  .tapwrap .lab{position:absolute;width:5vh;height:5vh;border-radius:1vh;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:2.6vh}
+  audio{margin-top:2.4vh;width:56vw;max-width:760px;filter:hue-rotate(12deg)}
+  .audionote{margin-top:1.4vh;font-size:2vh;color:var(--dim)}
+  .opts{display:flex;flex-wrap:wrap;gap:1.6vh;justify-content:center;margin-top:3vh;max-width:82vw}
+  .opt{display:flex;align-items:center;gap:1.2vh;padding:1.6vh 2.4vh;border-radius:1.4vh;font-size:3vh;min-width:22vw;justify-content:flex-start}
+  .opt .ltr{flex:none;width:4.4vh;height:4.4vh;border-radius:1vh;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:2.4vh}
+  .opt.c0{background:linear-gradient(160deg,#7a45ff,#4a15c6)} .opt.c1{background:linear-gradient(160deg,#ff9a4d,#e2560f)}
+  .opt.c2{background:linear-gradient(160deg,#ef5fc6,#c31e8f)} .opt.c3{background:linear-gradient(160deg,#6fbcff,#2f7fd6)}
+  .qmeta{display:flex;align-items:center;justify-content:center;gap:3vw;margin-top:3vh}
+  .ring{position:relative;width:11vh;height:11vh}.ring svg{transform:rotate(-90deg)}
+  .ring .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:4.6vh}
+  .votesin{font-size:3vh;color:var(--dim)}.votesin b{color:#fff;font-size:4.6vh}
 
   /* reveal */
-  .stamplbl{font-size:2.6vh;letter-spacing:.24em;text-transform:uppercase;color:var(--lemon);font-weight:400}
-  .stamp{font-family:var(--sans);font-size:19vh;font-weight:400;line-height:.85;letter-spacing:-.01em;margin-top:.4vh}
-  .stamp.ai{color:#a98bff;text-shadow:0 0 60px rgba(93,31,236,.8)}
-  .stamp.real{color:var(--orange);text-shadow:0 0 60px rgba(255,132,50,.7)}
-  .revealfact{font-family:var(--serif);font-weight:300;font-size:3.6vh;line-height:1.4;max-width:70vw;margin:2.4vh auto 0;color:#fff}
-  .splitwrap{margin:3.2vh auto 0;width:68vw;max-width:960px}
-  .splitbar{display:flex;height:6vh;border-radius:1.4vh;overflow:hidden;font-weight:400;font-size:2.6vh;box-shadow:0 10px 30px -12px rgba(0,0,0,.7)}
-  .splitbar .sa{background:linear-gradient(160deg,#7a45ff,#4a15c6);display:flex;align-items:center;justify-content:flex-start;padding-left:2vh;transition:width .8s cubic-bezier(.2,1,.3,1)}
-  .splitbar .sr{background:linear-gradient(160deg,#ff9a4d,#e2560f);display:flex;align-items:center;justify-content:flex-end;padding-right:2vh;transition:width .8s cubic-bezier(.2,1,.3,1)}
-  .splitlbls{display:flex;justify-content:space-between;margin-top:1vh;font-size:2.1vh;color:var(--dim);font-weight:400}
-  .gotright{margin-top:2.4vh;font-size:3vh;font-weight:400;color:var(--lemon)}
+  .stamplbl{font-size:2.4vh;letter-spacing:.24em;text-transform:uppercase;color:var(--lemon)}
+  .ans{font-family:var(--sans);font-size:11vh;line-height:.9;margin-top:.4vh}
+  .ans.c0{color:#a98bff}.ans.c1{color:var(--orange)}.ans.c2{color:#f57fd0}.ans.c3{color:#8fc7ff}
+  .revealfact{font-family:var(--serif);font-weight:300;font-size:3.2vh;line-height:1.4;max-width:74vw;margin:2vh auto 0}
+  .tally{margin:2.6vh auto 0;width:64vw;max-width:900px;text-align:left}
+  .trow{display:flex;align-items:center;gap:1.4vh;margin-bottom:1.1vh;font-size:2.4vh}
+  .trow .tl{flex:none;width:4vh;height:4vh;border-radius:1vh;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.14);font-size:2vh}
+  .trow .barwrap{flex:1;background:rgba(255,255,255,.1);border-radius:1vh;overflow:hidden;height:4.4vh;display:flex;align-items:center}
+  .trow .bar{height:100%;display:flex;align-items:center;padding-left:1.4vh;border-radius:1vh;transition:width .8s cubic-bezier(.2,1,.3,1);white-space:nowrap;min-width:fit-content}
+  .trow.right .bar{box-shadow:0 0 0 2px var(--lemon) inset}
+  .trow.right .tl{background:var(--lemon);color:#1a0b2e}
+  .b0{background:linear-gradient(90deg,#7a45ff,#5d2ad6)} .b1{background:linear-gradient(90deg,#ff9a4d,#ef6a1a)}
+  .b2{background:linear-gradient(90deg,#ef5fc6,#d23aa6)} .b3{background:linear-gradient(90deg,#6fbcff,#3f92e0)}
+  .gotright{margin-top:2.2vh;font-size:2.8vh;color:var(--lemon)}
 
-  /* leaderboard */
-  .lbtitle{line-height:.85;margin-bottom:3vh}
-  .lbtitle .a{font-family:var(--sans);font-size:4vh;display:block;letter-spacing:.02em}
+  .lbtitle .a{font-family:var(--sans);font-size:4vh;display:block}
   .lbtitle .b{font-family:var(--serif);font-style:italic;font-weight:300;font-size:11vh;display:block}
-  .lb{width:62vw;max-width:860px}
-  .row{display:flex;align-items:center;gap:2vw;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:1.6vh;padding:1.5vh 2.4vh;margin-bottom:1.3vh;font-size:3.3vh;font-weight:400}
-  .row .rk{width:6vh;text-align:center;font-weight:400;color:var(--dim);font-family:var(--serif);font-size:3.6vh}
+  .lb{width:60vw;max-width:840px;margin-top:2vh}
+  .row{display:flex;align-items:center;gap:2vw;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:1.6vh;padding:1.4vh 2.4vh;margin-bottom:1.2vh;font-size:3.2vh}
+  .row .rk{width:6vh;text-align:center;color:var(--dim);font-family:var(--serif);font-size:3.4vh}
   .row .nm{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .row .sc{color:var(--lemon);font-weight:400}
+  .row .sc{color:var(--lemon)}
   .row.top1{background:linear-gradient(100deg,rgba(255,255,95,.2),rgba(255,255,255,.06));border-color:rgba(255,255,95,.5);transform:scale(1.03)}
-  .row.top1 .sc{color:var(--lemon)}
-  .winner{font-family:var(--serif);font-style:italic;font-weight:300;font-size:6vh;margin-bottom:2vh}
-  .confetti{font-size:9vh}
+  .winner{font-family:var(--serif);font-style:italic;font-weight:300;font-size:6vh;margin-bottom:2vh}.confetti{font-size:9vh}
 
-  /* control bar */
-  #ctrl{position:fixed;bottom:0;left:0;right:0;z-index:5;display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(12,4,29,.85);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.12);transition:transform .25s}
+  #ctrl{position:fixed;bottom:0;left:0;right:0;z-index:5;display:flex;align-items:center;gap:9px;padding:9px 14px;background:rgba(12,4,29,.85);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.12);transition:transform .25s}
   #ctrl.hidden{transform:translateY(110%)}
-  #ctrl .status{font-size:13px;color:var(--dim);font-weight:400;letter-spacing:.03em;min-width:210px}
-  #ctrl .status b{color:#fff}
-  .cbtn{padding:11px 20px;border:none;border-radius:11px;font-size:15px;font-weight:400;font-family:var(--sans);color:#fff;cursor:pointer;background:rgba(255,255,255,.14)}
-  .cbtn.primary{background:linear-gradient(100deg,var(--violet),var(--pink));box-shadow:0 8px 24px -8px var(--pink)}
-  .cbtn.warn{background:rgba(255,90,70,.24);color:#ffc4b8}
-  .cbtn:active{transform:scale(.97)}
-  .spacer{flex:1}
-  .hint{font-size:11px;color:rgba(255,255,255,.42);letter-spacing:.03em}
+  #ctrl .status{font-size:13px;color:var(--dim);min-width:200px}#ctrl .status b{color:#fff}
+  .cbtn{padding:10px 17px;border:none;border-radius:10px;font-size:14px;font-family:var(--sans);color:#fff;cursor:pointer;background:rgba(255,255,255,.14);text-decoration:none;display:inline-block}
+  .cbtn.primary{background:linear-gradient(100deg,var(--violet),var(--pink))}
+  .cbtn.warn{background:rgba(255,90,70,.24);color:#ffc4b8}.cbtn:active{transform:scale(.97)}
+  .spacer{flex:1}.hint{font-size:11px;color:rgba(255,255,255,.42)}
 </style>
 </head>
 <body>
@@ -126,137 +113,132 @@
   <button class="cbtn primary" id="btnNext">Start ▶</button>
   <button class="cbtn" id="btnReveal">Reveal</button>
   <button class="cbtn" id="btnBoard">Leaderboard</button>
-  <a class="cbtn" id="btnAdmin" href="admin.html" target="_blank" style="text-decoration:none">✎ Questions</a>
+  <a class="cbtn" id="btnAdmin" href="admin.html" target="_blank">✎ Questions</a>
   <div class="spacer"></div>
-  <div class="hint">←/→ or Space step · R reveal · L board · H hide bar</div>
+  <div class="hint">←/→ or Space step · R reveal · L board · H hide</div>
   <button class="cbtn warn" id="btnReset">Reset</button>
 </div>
 
-<script src="config.js?v=3"></script>
+<script src="config.js?v=4"></script>
 <script>
 const H={"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
 async function sbGet(p){const r=await fetch(SUPABASE_URL+"/rest/v1/"+p,{headers:H});if(!r.ok)throw 0;return r.json();}
 async function sbRpc(fn,b){const r=await fetch(SUPABASE_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:H,body:JSON.stringify(b||{})});if(!r.ok)throw 0;return r.json();}
-async function setState(patch){
-  patch.updated_at=new Date().toISOString();
-  await fetch(SUPABASE_URL+"/rest/v1/air_state?id=eq.1",{method:"PATCH",headers:{...H,"Prefer":"return=minimal"},body:JSON.stringify(patch)});
-}
+async function setState(patch){patch.updated_at=new Date().toISOString();
+  await fetch(SUPABASE_URL+"/rest/v1/air_state?id=eq.1",{method:"PATCH",headers:{...H,"Prefer":"return=minimal"},body:JSON.stringify(patch)});}
 
-const JOIN_URL = (typeof PLAYER_URL!=="undefined" && PLAYER_URL) ? PLAYER_URL : (location.origin+"/");
-const stage=document.getElementById("stage");
-const statusEl=document.getElementById("status");
-const burst=document.getElementById("burst");
-let state={phase:"lobby",current_round:0,round_started_at:null};
-let renderKey="";
+const JOIN_URL=(typeof PLAYER_URL!=="undefined"&&PLAYER_URL)?PLAYER_URL:(location.origin+"/");
+const stage=document.getElementById("stage"), statusEl=document.getElementById("status"), burst=document.getElementById("burst");
+let state={phase:"lobby",current_round:0,round_started_at:null}, renderKey="";
 const roundByN=n=>ROUNDS.find(r=>r.n===n);
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-
-function setDim(on){ document.body.setAttribute("data-dim", on?"1":"0"); }
-function showBurst(color){ burst.querySelector(".b").style.setProperty("--bc",color); burst.style.display="flex"; burst.querySelector(".b").style.animation="none"; void burst.offsetWidth; burst.querySelector(".b").style.animation=""; }
-function hideBurst(){ burst.style.display="none"; }
+const LETTERS=["A","B","C","D","E"];
+const quad=["Top-Left","Top-Right","Bottom-Left","Bottom-Right"];
+function optLabel(r,i){ return r.interaction==="tapgrid" ? quad[i] : (r.options[i]!=null?r.options[i]:("Option "+LETTERS[i])); }
+function optCount(r){ return r.interaction==="tapgrid"?4:r.options.length; }
+function setDim(on){document.body.setAttribute("data-dim",on?"1":"0");}
+function setMode(m){document.body.setAttribute("data-mode",m||"normal");}
+function showBurst(c){burst.querySelector(".b").style.setProperty("--bc",c);burst.style.display="flex";const b=burst.querySelector(".b");b.style.animation="none";void b.offsetWidth;b.style.animation="";}
+function hideBurst(){burst.style.display="none";}
 
 async function render(){
   const r=roundByN(state.current_round);
   const key=state.phase+"|"+state.current_round;
-  const dynamic = state.phase==="question"||state.phase==="reveal"||state.phase==="lobby"||state.phase==="leaderboard";
-  if(key===renderKey && !dynamic) return;
-
-  if(state.phase==="lobby"){ setDim(false); hideBurst(); if(renderKey!==key){renderLobby();renderKey=key;} refreshLobby(); }
-  else if(state.phase==="question"){ setDim(true); hideBurst(); if(renderKey!==key){renderQuestion(r);renderKey=key;} refreshQuestion(r); }
-  else if(state.phase==="reveal"){ setDim(true); if(renderKey!==key){renderReveal(r);renderKey=key;} }
-  else if(state.phase==="leaderboard"||state.phase==="finished"){ setDim(false); hideBurst(); if(renderKey!==key){renderBoard();renderKey=key;} }
+  const dyn=["question","reveal","lobby","leaderboard"].includes(state.phase);
+  if(key===renderKey&&!dyn) return;
+  if(state.phase==="lobby"){ setDim(false);setMode("normal");hideBurst(); if(renderKey!==key){renderLobby();renderKey=key;} refreshLobby(); }
+  else if(state.phase==="question"){ setDim(true);setMode(r&&r.mode);hideBurst(); if(renderKey!==key){renderQuestion(r);renderKey=key;} refreshQuestion(r); }
+  else if(state.phase==="reveal"){ setDim(true);setMode(r&&r.mode); if(renderKey!==key){renderReveal(r);renderKey=key;} }
+  else if(state.phase==="leaderboard"||state.phase==="finished"){ setDim(false);setMode("normal"); if(renderKey!==key){renderBoard();renderKey=key;} }
   updateStatus();
 }
 
 function renderLobby(){
-  stage.innerHTML=`
-    <div class="fade">
-      <div class="tlock"><span class="a">AI or</span><span class="b grad">Real?</span></div>
-      <div class="lobby-sub">Scan the code, add your name, and beat the crowd.</div>
-      <div class="qrbox pop"><img src="https://api.qrserver.com/v1/create-qr-code/?size=460x460&margin=8&data=${encodeURIComponent(JOIN_URL)}" alt="Scan to play" onerror="this.style.display='none'"></div>
-      <div class="joinurl">Point your phone camera at the code</div>
-      <div class="count"><span id="pc">0</span><small>players in</small></div>
-    </div>`;
+  stage.innerHTML=`<div class="fade">
+    <div class="tlock"><span class="a">AI or</span><span class="b grad">Real?</span></div>
+    <div class="lobby-sub">Scan the code, add your name, and beat the crowd.</div>
+    <div class="qrbox pop"><img src="https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=8&data=${encodeURIComponent(JOIN_URL)}" alt="Scan" onerror="this.style.display='none'"></div>
+    <div class="joinurl">Point your phone camera at the code</div>
+    <div class="count"><span id="pc">0</span><small>players in</small></div></div>`;
 }
-async function refreshLobby(){
-  try{const c=await sbRpc("air_player_count");const el=document.getElementById("pc");if(el)el.textContent=Number(c).toLocaleString();}catch(e){}
-}
+async function refreshLobby(){ try{const c=await sbRpc("air_player_count");const el=document.getElementById("pc");if(el)el.textContent=Number(c).toLocaleString();}catch(e){} }
 
-function ringSVG(){
-  return `<div class="ring"><svg width="100%" height="100%" viewBox="0 0 100 100">
-    <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="8"/>
-    <circle id="rc" cx="50" cy="50" r="44" fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="0"/>
-    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffff5f"/><stop offset="1" stop-color="#ff8432"/></linearGradient></defs>
-    </svg><div class="num" id="rnum">${TIMER_SECONDS}</div></div>`;
+function ringSVG(){return `<div class="ring"><svg width="100%" height="100%" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="8"/>
+  <circle id="rc" cx="50" cy="50" r="44" fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="0"/>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffff5f"/><stop offset="1" stop-color="#ff8432"/></linearGradient></defs>
+  </svg><div class="num" id="rnum">${'' }</div></div>`;}
+
+function mediaScreen(r){
+  if(r.media_type==="image" && r.interaction!=="tapgrid") return `<img class="qimg pop" src="${roundImage(r)}" alt="Round ${r.n}" onerror="this.style.display='none'">`;
+  if(r.media_type==="audio"){
+    return r.media_url
+      ? `<audio controls src="${r.media_url}"></audio><div class="audionote">Press play — the crowd votes on their phones</div>`
+      : `<div class="audionote">🔊 Audio not uploaded yet (add it in the admin page)</div>`;
+  }
+  return "";
 }
 function renderQuestion(r){
   if(!r){stage.innerHTML="";return;}
-  const body = r.type==="image"
-    ? `<img class="qimg pop" src="${r.img}" alt="Round ${r.n}" onerror="this.replaceWith(document.createTextNode('[image ${r.n}]'))">`
-    : `<div class="qstory pop">“${esc(r.text)}”</div>`;
-  stage.innerHTML=`
-    <div class="fade" style="width:100%;display:flex;flex-direction:column;align-items:center">
-      <div class="qhead">Round ${r.n} of ${ROUNDS.length} · ${esc(r.label)}</div>
-      <div class="qtitle"><span class="a">AI or </span><span class="b grad">Real?</span></div>
-      <div class="qcard">${body}</div>
-      <div class="qmeta">${ringSVG()}<div class="votesin"><b id="vin">0</b> votes in</div></div>
-    </div>`;
+  const mbadge = r.mode==="blitz"?`<span class="m">⚡ Blitz</span>`:(r.mode==="sudden_death"?`<span class="m sd">💀 Sudden Death</span>`:"");
+  let middle="";
+  if(r.interaction==="tapgrid"){
+    middle=`<div class="tapwrap"><img class="qimg pop" src="${roundImage(r)}" alt="Round ${r.n}">
+      <div class="lab" style="left:1.2vh;top:3.2vh">A</div><div class="lab" style="right:1.2vh;top:3.2vh">B</div>
+      <div class="lab" style="left:1.2vh;bottom:1.2vh">C</div><div class="lab" style="right:1.2vh;bottom:1.2vh">D</div></div>
+      <div class="audionote">Tap a quadrant on your phone</div>`;
+  } else {
+    const codey = /\n/.test(r.content) && /[=;{}()]/.test(r.content);
+    const body = r.content?`<div class="qbody ${codey?'code':''}">${esc(r.content)}</div>`:``;
+    const opts = r.options.map((o,i)=>`<div class="opt c${i}"><span class="ltr">${LETTERS[i]}</span>${esc(o)}</div>`).join("");
+    middle=`${body}${mediaScreen(r)}<div class="opts">${opts}</div>`;
+  }
+  stage.innerHTML=`<div class="fade" style="width:100%;display:flex;flex-direction:column;align-items:center">
+    <div class="qhead">Round ${r.n} of ${ROUNDS.length} · ${esc(r.label)} ${mbadge}</div>
+    <div class="qprompt">${esc(r.prompt)}</div>
+    ${middle}
+    <div class="qmeta">${ringSVG()}<div class="votesin"><b id="vin">0</b> votes in</div></div></div>`;
 }
 function refreshQuestion(r){
   const started=state.round_started_at?new Date(state.round_started_at).getTime():Date.now();
-  const total=TIMER_SECONDS*1000, left=Math.max(0,total-(Date.now()-started));
+  const total=roundTimer(r)*1000, left=Math.max(0,total-(Date.now()-started));
   const num=document.getElementById("rnum"), rc=document.getElementById("rc");
   if(num) num.textContent=Math.ceil(left/1000);
-  if(rc){ const frac=left/total; rc.style.strokeDashoffset=(276.5*(1-frac)).toFixed(1); }
-  sbRpc("air_round_tally",{r:state.current_round}).then(t=>{
-    const row=Array.isArray(t)?t[0]:t; const el=document.getElementById("vin");
-    if(el&&row) el.textContent=Number(row.total).toLocaleString();
-  }).catch(()=>{});
+  if(rc){const frac=left/total; rc.style.strokeDashoffset=(276.5*(1-frac)).toFixed(1);}
+  sbRpc("air_tally",{r:state.current_round}).then(t=>{const el=document.getElementById("vin");if(el&&t)el.textContent=Number(t.total||0).toLocaleString();}).catch(()=>{});
 }
 
 async function renderReveal(r){
   if(!r){stage.innerHTML="";return;}
-  showBurst(r.answer==="ai" ? "#5d1fec" : "#ff8432");
-  let t={ai_count:0,real_count:0,correct_count:0,total:0};
-  try{const res=await sbRpc("air_round_tally",{r:r.n});t=(Array.isArray(res)?res[0]:res)||t;}catch(e){}
-  const ai=Number(t.ai_count)||0, real=Number(t.real_count)||0, tot=ai+real||1;
-  const aiPct=Math.round(ai/tot*100), realPct=100-aiPct;
-  const correct=Number(t.correct_count)||0, total=Number(t.total)||0;
-  stage.innerHTML=`
-    <div class="fade" style="width:100%;display:flex;flex-direction:column;align-items:center">
-      <div class="stamplbl">The answer is…</div>
-      <div class="stamp ${r.answer} pop">${r.answer.toUpperCase()}</div>
-      <div class="revealfact">${esc(r.reveal)}</div>
-      <div class="splitwrap">
-        <div class="splitbar">
-          <div class="sa" style="width:${aiPct}%">${aiPct>10?aiPct+"% AI":""}</div>
-          <div class="sr" style="width:${realPct}%">${realPct>10?realPct+"% REAL":""}</div>
-        </div>
-        <div class="splitlbls"><span>${ai.toLocaleString()} said AI</span><span>${real.toLocaleString()} said REAL</span></div>
-      </div>
-      <div class="gotright">🎯 ${correct.toLocaleString()} of ${total.toLocaleString()} nailed it</div>
-    </div>`;
+  const ci=r.answer_index;
+  showBurst(["#5d1fec","#ff8432","#e444b9","#62b4ff"][ci]||"#ff8432");
+  let t={total:0,correct:0,counts:{}};
+  try{t=await sbRpc("air_tally",{r:r.n})||t;}catch(e){}
+  const total=Number(t.total)||0, correct=Number(t.correct)||0, counts=t.counts||{};
+  const n=optCount(r);
+  let rows="";
+  for(let i=0;i<n;i++){
+    const c=Number(counts[String(i)])||0; const pct=total?Math.round(c/total*100):0;
+    rows+=`<div class="trow ${i===ci?'right':''}"><div class="tl">${LETTERS[i]}</div>
+      <div class="barwrap"><div class="bar b${i}" style="width:${Math.max(pct,7)}%">${esc(optLabel(r,i))} · ${pct}%</div></div></div>`;
+  }
+  const mbadge = r.mode==="blitz"?`<span class="qhead"><span class="m">⚡ Blitz · 1.5× points</span></span>`:(r.mode==="sudden_death"?`<span class="qhead"><span class="m sd">💀 Sudden Death</span></span>`:"");
+  stage.innerHTML=`<div class="fade" style="width:100%;display:flex;flex-direction:column;align-items:center">
+    <div class="stamplbl">The answer is…</div>
+    <div class="ans c${ci} pop">${esc(optLabel(r,ci))}</div>
+    ${mbadge}
+    <div class="revealfact">${esc(r.reveal)}</div>
+    <div class="tally">${rows}</div>
+    <div class="gotright">🎯 ${correct.toLocaleString()} of ${total.toLocaleString()} nailed it</div></div>`;
 }
 
 async function renderBoard(){
-  let rows=[];
-  try{rows=await sbRpc("air_leaderboard",{limit_n:10});}catch(e){}
-  const medal=i=>["🥇","🥈","🥉"][i]||(i+1);
-  const winner=rows[0];
-  const finished=state.phase==="finished";
+  let rows=[]; try{rows=await sbRpc("air_leaderboard",{limit_n:10});}catch(e){}
+  const medal=i=>["🥇","🥈","🥉"][i]||(i+1); const winner=rows[0]; const finished=state.phase==="finished";
   if(finished) showBurst("#ffff5f"); else hideBurst();
-  stage.innerHTML=`
-    <div class="fade" style="width:100%;display:flex;flex-direction:column;align-items:center">
-      ${finished&&winner?`<div class="confetti pop">🎉</div><div class="winner">🏆 ${esc(winner.name)} wins!</div>`:`<div class="lbtitle"><span class="a">The</span><span class="b grad">Leaderboard</span></div>`}
-      <div class="lb">
-        ${rows.length?rows.map((r,i)=>`
-          <div class="row ${i===0?'top1':''}">
-            <div class="rk">${medal(i)}</div>
-            <div class="nm">${esc(r.name)}</div>
-            <div class="sc">${Number(r.score).toLocaleString()}</div>
-          </div>`).join(""):`<div class="lobby-sub">Scores will appear here…</div>`}
-      </div>
-    </div>`;
+  stage.innerHTML=`<div class="fade" style="width:100%;display:flex;flex-direction:column;align-items:center">
+    ${finished&&winner?`<div class="confetti pop">🎉</div><div class="winner">🏆 ${esc(winner.name)} wins!</div>`:`<div class="lbtitle"><span class="a">The</span><span class="b grad">Leaderboard</span></div>`}
+    <div class="lb">${rows.length?rows.map((r,i)=>`<div class="row ${i===0?'top1':''}"><div class="rk">${medal(i)}</div><div class="nm">${esc(r.name)}</div><div class="sc">${Number(r.score).toLocaleString()}</div></div>`).join(""):`<div class="lobby-sub">Scores will appear here…</div>`}</div></div>`;
 }
 
 function updateStatus(){
@@ -266,61 +248,47 @@ function updateStatus(){
   if(state.phase==="lobby") nb.textContent="Start ▶";
   else if(state.phase==="question") nb.textContent="Reveal ▶";
   else if(state.phase==="reveal") nb.textContent=(state.current_round<ROUNDS.length)?"Next round ▶":"Show leaderboard ▶";
-  else if(state.phase==="leaderboard") nb.textContent="Crown winner ▶";
-  else nb.textContent="—";
+  else if(state.phase==="leaderboard") nb.textContent="Crown winner ▶"; else nb.textContent="—";
 }
 async function advance(){
   const p=state.phase, n=state.current_round;
-  if(p==="lobby"){ await setState({phase:"question",current_round:1,round_started_at:new Date().toISOString()}); }
-  else if(p==="question"){ await setState({phase:"reveal"}); }
-  else if(p==="reveal"){
-    if(n<ROUNDS.length) await setState({phase:"question",current_round:n+1,round_started_at:new Date().toISOString()});
-    else await setState({phase:"leaderboard"});
-  }
-  else if(p==="leaderboard"){ await setState({phase:"finished"}); }
+  if(p==="lobby") await setState({phase:"question",current_round:1,round_started_at:new Date().toISOString()});
+  else if(p==="question") await setState({phase:"reveal"});
+  else if(p==="reveal"){ if(n<ROUNDS.length) await setState({phase:"question",current_round:n+1,round_started_at:new Date().toISOString()}); else await setState({phase:"leaderboard"}); }
+  else if(p==="leaderboard") await setState({phase:"finished"});
+  await poll();
+}
+async function prev(){
+  const p=state.phase, n=state.current_round;
+  if(p==="finished") await setState({phase:"leaderboard"});
+  else if(p==="leaderboard") await setState({phase:"reveal",current_round:ROUNDS.length});
+  else if(p==="reveal") await setState({phase:"question",round_started_at:new Date().toISOString()});
+  else if(p==="question"){ if(n>1) await setState({phase:"reveal",current_round:n-1}); else await setState({phase:"lobby",current_round:0,round_started_at:null}); }
   await poll();
 }
 async function doReveal(){ if(state.phase==="question"){ await setState({phase:"reveal"}); await poll(); } }
 async function doBoard(){ await setState({phase:"leaderboard"}); await poll(); }
-async function prev(){
-  const p=state.phase, n=state.current_round;
-  if(p==="finished"){ await setState({phase:"leaderboard"}); }
-  else if(p==="leaderboard"){ await setState({phase:"reveal", current_round:ROUNDS.length}); }
-  else if(p==="reveal"){ await setState({phase:"question", round_started_at:new Date().toISOString()}); }
-  else if(p==="question"){
-    if(n>1) await setState({phase:"reveal", current_round:n-1});
-    else await setState({phase:"lobby", current_round:0, round_started_at:null});
-  }
-  await poll();
-}
 
 let resetArmed=false;
 document.getElementById("btnNext").onclick=advance;
 document.getElementById("btnPrev").onclick=prev;
 document.getElementById("btnReveal").onclick=doReveal;
 document.getElementById("btnBoard").onclick=doBoard;
-document.getElementById("btnReset").onclick=async(e)=>{
-  const b=e.target;
-  if(!resetArmed){ resetArmed=true; b.textContent="Sure? Tap again"; setTimeout(()=>{resetArmed=false;b.textContent="Reset";},3000); return; }
-  resetArmed=false; b.textContent="Reset";
-  await sbRpc("air_reset"); renderKey=""; await poll();
-};
+document.getElementById("btnReset").onclick=async(e)=>{const b=e.target;
+  if(!resetArmed){resetArmed=true;b.textContent="Sure? Tap again";setTimeout(()=>{resetArmed=false;b.textContent="Reset";},3000);return;}
+  resetArmed=false;b.textContent="Reset";await sbRpc("air_reset");renderKey="";await poll();};
 document.addEventListener("keydown",e=>{
-  if(e.key===" "||e.key==="ArrowRight"){ e.preventDefault(); advance(); }
-  else if(e.key==="ArrowLeft"){ e.preventDefault(); prev(); }
-  else if(e.key.toLowerCase()==="r"){ doReveal(); }
-  else if(e.key.toLowerCase()==="l"){ doBoard(); }
-  else if(e.key.toLowerCase()==="h"){ document.getElementById("ctrl").classList.toggle("hidden"); }
+  if(e.key===" "||e.key==="ArrowRight"){e.preventDefault();advance();}
+  else if(e.key==="ArrowLeft"){e.preventDefault();prev();}
+  else if(e.key.toLowerCase()==="r")doReveal();
+  else if(e.key.toLowerCase()==="l")doBoard();
+  else if(e.key.toLowerCase()==="h")document.getElementById("ctrl").classList.toggle("hidden");
 });
-
 async function poll(){
-  try{
-    const rows=await sbGet("air_state?id=eq.1&select=phase,current_round,round_started_at");
-    if(rows&&rows[0]) state=rows[0];
-  }catch(e){}
+  try{const rows=await sbGet("air_state?id=eq.1&select=phase,current_round,round_started_at");if(rows&&rows[0])state=rows[0];}catch(e){}
   render();
 }
-(async()=>{ await loadRounds(); render(); poll(); setInterval(poll, 1200); })();
+(async()=>{ await loadRounds(); render(); poll(); setInterval(poll,1200); })();
 </script>
 </body>
 </html>
