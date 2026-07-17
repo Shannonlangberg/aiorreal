@@ -1,7 +1,7 @@
 # 🎬 AI or Real — Run of Show (Futures Dream Team)
 
-A live, phone-based crowd game, fully in the Futures brand. The big screen shows a
-photo or a quote; the crowd votes **AI** or **REAL** on their phones; points for being
+A live, phone-based crowd game-show in the Futures brand. The big screen shows a
+photo, quote, clip or question; the crowd answers on their phones; points for being
 right *and* fast; a live leaderboard crowns a winner. Built for ~500 players.
 
 ---
@@ -10,98 +10,93 @@ right *and* fast; a live leaderboard crowns a winner. Built for ~500 players.
 
 | Who | Link |
 |-----|------|
-| **Big screen** (your presenting laptop) | `https://shannonlangberg.github.io/aiorreal/screen.html` |
+| **Big screen** (presenting laptop) | `https://shannonlangberg.github.io/aiorreal/screen.html` |
 | **Players' phones** (this is the QR on screen) | `https://shannonlangberg.github.io/aiorreal/` |
 | **Question editor / admin** (you only) | `https://shannonlangberg.github.io/aiorreal/admin.html` |
 
-Players never type a link — they scan the QR on the big screen.
-The admin page passphrase is **`futures2026`**.
+Admin passphrase: **`futures2026`**.
 
 ---
 
-## ✍️ Editing questions (the admin page)
+## ⭐ NEW — question formats
 
-Open the **admin link**, enter the passphrase, and you'll see every question. The 10
-starter questions are already loaded. For each one you can set:
+The game now supports much more than "AI or Real":
 
-- **Type** — Text (a quote/story) or Image (a photo)
-- **Answer** — AI or REAL
-- **Label** (shown on screen, e.g. "An inspirational quote"), and difficulty
-- **The text** (for text rounds) or **a photo** (for image rounds — click *Choose file*, it
-  uploads and saves automatically)
-- **Reveal** — the fun fact shown after the answer
+- **Multiple choice** with **2, 3 or 4 answer options** and your own labels (A/B/C/D).
+- **Tap-the-quadrant** image rounds — the crowd taps which quarter of the photo has the glitch.
+- **Audio rounds** — you play a clip on the big screen; the crowd votes on their phones.
+- **⚡ Blitz** — a fast timer, worth **1.5× points**.
+- **💀 Sudden Death** — dramatic red screen; a wrong answer greys out that player's phone for the round (they're back next round — nobody's kicked out). Also 1.5× points.
 
-You can **＋ Add question**, **↑ ↓ reorder**, toggle **live** on/off, and **Delete**.
-Hit **Save** on a card to store changes. Everything saves to your game in the cloud.
+**19 questions are already loaded** (your 15 + 4 Futures/church rounds). That's a lot for
+a warm-up — I'd **toggle some off** (the "live" checkbox in admin) down to a punchy **10–12**.
 
-> The four image rounds are ready to receive real photos — just open each image round,
-> upload a picture, and Save. **Refresh the big screen after editing** so it picks up changes.
+---
 
-Good image picks: an obvious AI fail (weird hands) for an easy one, a convincing AI face,
-a *real* photo that looks fake (a fun "gotcha"), and a jaw-dropping near-perfect AI shot.
+## 🖼️ MUST DO before the event — add your media
+
+Several rounds are ready but need their photo/audio. Open **admin**, open each round, and
+upload the file (it saves automatically). Rounds waiting for media:
+
+- **Photos:** Midjourney cat, skyscrapers, tomato, tap-the-glitch crowd, blueprint,
+  marathon (Sudden Death), 1920s family, headshots, watch face, mandala (Blitz).
+- **Audio:** the "voice clone" round (round 7).
+
+A couple of rounds (Midjourney prompt, "who coded it") have placeholder wrong-answers —
+tweak those option texts to taste. And the **preacher round** is currently an AI-written
+line; to add a *real* Ps Ashley / *Multiply or Die* quote, hit **＋ Add question** in admin,
+paste the quote, set the answer to "A real preacher." (I couldn't source a verified quote —
+the book only released today — so I didn't want to guess one.)
+
+> After any edit, **refresh the big screen** so it picks up your changes.
 
 ---
 
 ## ✅ Before the service (5-min setup)
 
-1. On the presenting laptop, open the **big-screen link** and press **F11** for full-screen.
-2. You'll see the branded **AI or Real?** lobby with the QR code and a live player counter.
-3. Test on your own phone: scan the QR, enter a name, press **Start**, vote, then **Reveal**.
-4. Press **Reset** (twice) on the control bar to clear your test → back to 0 players.
-5. Keep the laptop on **stable wifi/ethernet**; phones can be on anything.
+1. Open the **big-screen link** on the presenting laptop, press **F11** for full-screen.
+2. You'll see the branded lobby with the QR + live player counter.
+3. Test on your phone: scan, enter a name, press **Start**, answer, **Reveal**.
+4. Press **Reset** (twice) to clear the test → back to 0 players.
+5. Stable wifi/ethernet for the laptop; phones can be on anything.
 
 ---
 
 ## 🎮 Running it live — the control bar
 
-One primary button (or the **spacebar**) drives everything; its label tells you what's next.
+One primary button (or **spacebar**) drives everything; its label tells you what's next.
 
 | You're in… | Press | What happens |
 |------------|-------|--------------|
-| Lobby | **Start ▶** | Opens Round 1 — photo/quote appears, timer counts down |
-| A question | **Reveal ▶** | Shows the answer + how the crowd split |
-| A reveal | **Next round ▶** | Moves to the next question |
+| Lobby | **Start ▶** | Opens Round 1 |
+| A question | **Reveal ▶** | Shows the answer + how the crowd split, per option |
+| A reveal | **Next round ▶** | Next question |
 | After the last round | **Show leaderboard ▶** | Top 10 |
 | Leaderboard | **Crown winner ▶** | Confetti + winner |
 
-**Keyboard:** **→ / Space** = next · **←** = back a step (undo a misclick) · **R** = reveal ·
-**L** = leaderboard · **H** = hide the control bar for a clean screen.
+**Keyboard:** **→ / Space** = next · **←** = back a step · **R** = reveal · **L** = leaderboard ·
+**H** = hide the control bar. Buttons: **◀** back · **✎ Questions** opens the editor ·
+**Reset** (tap twice) clears everyone to the lobby.
 
-Other buttons: **◀** steps back one stage, **✎ Questions** opens the editor, **Reset**
-(tap twice) clears everyone back to the lobby.
-
-**Rhythm per round:** show the quote/photo, let the timer run ~15–20s while you banter
-("lock it in!"), hit **Reveal**, read the punchy fact, then **Next**. ~10–14 min total.
-
----
-
-## 🗝️ Answer key (starter questions)
-
-The screen shows these automatically; here they are for your prep. Answers mix on purpose.
-
-1. "Every sunrise…" → **AI** · 2. [image] → **AI** (hands) · 3. "Amazing grace…" → **REAL**
-(John Newton, 1772) · 4. [image] → **AI** portrait · 5. "I'm an ocean of surrender…" → **AI**
-· 6. [image, the trap] → **REAL** · 7. "As iron sharpens iron…" → **AI** (fake Scripture!) ·
-8. "Be still, and know…" → **REAL** (Psalm 46:10) · 9. [image] → **AI** (near-perfect) ·
-10. "We know what we are…" → **REAL** (Shakespeare).
+For **audio rounds**, press ▶ on the audio player on the big screen so the room hears it.
 
 ---
 
 ## 🧯 If something goes sideways
 
-- **A phone looks stuck?** Refresh the page — their score is saved, they rejoin where the game is.
-- **Screen out of sync?** Refresh the big-screen page; it reconnects to the live state.
+- **Phone stuck?** Refresh — score is saved, they rejoin where the game is.
+- **Screen out of sync?** Refresh the big-screen page.
 - **Advanced too far?** Press **←** to step back.
-- **Whole thing acting up?** **Reset** (twice) returns everyone to the lobby.
-- **Wifi swamped?** The game retries automatically; encourage phones onto mobile data.
-- **Total fallback:** play it old-school — show each screen, crowd shouts AI or Real, use the key above.
+- **Acting up?** **Reset** (twice) → lobby.
+- **Wifi swamped?** It retries automatically; encourage phones onto mobile data.
+- **Total fallback:** show each screen and have the crowd shout the answer.
 
 ---
 
 ## 🔁 Between two services
 
-Press **Reset** (twice) before the second service — clears players and scores, same links,
-same questions. Have a blast up there. 💜
+**Reset** (twice) before the second service — clears players and scores, keeps your
+questions. Same links. Have a blast. 💜
 
-*(Tech notes: hosted on GitHub Pages, data + photos in Supabase. To change the admin
-passphrase, edit `ADMIN_PIN` in config.js.)*
+*(Tech: hosted on GitHub Pages; questions, scores + media in Supabase. Change the admin
+passphrase or the Blitz timer any time — passphrase in config.js, timers per-round in admin.)*
