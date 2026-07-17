@@ -10,9 +10,9 @@ right *and* fast; a live leaderboard crowns a winner. Built for ~500 players.
 
 | Who | Link |
 |-----|------|
-| **Big screen** (presenting laptop) | `https://shannonlangberg.github.io/aiorreal/screen.html` |
-| **Players' phones** (this is the QR on screen) | `https://shannonlangberg.github.io/aiorreal/` |
-| **Question editor / admin** (you only) | `https://shannonlangberg.github.io/aiorreal/admin.html` |
+| **Big screen** (presenting laptop) | `https://futures-ai-or-real.netlify.app/screen.html` |
+| **Players' phones** (this is the QR on screen) | `https://futures-ai-or-real.netlify.app/` |
+| **Question editor / admin** (you only) | `https://futures-ai-or-real.netlify.app/admin.html` |
 
 Admin passphrase: **`futures2026`**.
 

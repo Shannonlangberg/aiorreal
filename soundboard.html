@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AI or Real — Sound FX (Futures)</title>
+<style>
+  @font-face{font-family:'Gal Gothic';src:url('assets/fonts/GalGothic-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+  @font-face{font-family:'Rhymes Display';src:url('assets/fonts/RhymesDisplay-LightItalic.woff2') format('woff2');font-weight:300;font-style:italic;font-display:swap}
+  :root{
+    --orange:#ff8432; --pink:#e444b9; --violet:#5d1fec; --sky:#62b4ff; --lemon:#ffff5f;
+    --ink:#fff; --dim:rgba(255,255,255,.62);
+    --sans:'Gal Gothic',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    --serif:'Rhymes Display',Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%;font-family:var(--sans);color:#fff}
+  body{background:radial-gradient(130% 100% at 50% -10%, #3a1360 0%, #1e0a3d 46%, #0c041d 100%);
+    padding:3vh 4vw 5vh;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+  .brandbar{display:flex;align-items:center;gap:12px;margin-bottom:1vh}
+  .brandbar img{height:22px;opacity:.95}
+  .brandbar .tag{letter-spacing:.2em;text-transform:uppercase;font-size:11px;color:var(--dim)}
+  h1{font-family:var(--serif);font-style:italic;font-weight:300;font-size:32px;margin:6px 0 2px;text-align:center}
+  .sub{color:var(--dim);font-size:14px;margin-bottom:3vh;text-align:center;max-width:80vw}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:520px}
+  .sfxbtn{border:none;border-radius:18px;padding:20px 10px;color:#fff;font-family:var(--sans);cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 16px 34px -14px rgba(0,0,0,.6);
+    transition:transform .12s, filter .3s}
+  .sfxbtn .emoji{font-size:34px}
+  .sfxbtn .lbl{font-size:14px;text-align:center;line-height:1.25}
+  .sfxbtn:active{transform:scale(.94)}
+  .sfxbtn.firing{filter:brightness(1.5)}
+  .c0{background:linear-gradient(160deg,#33c17a,#1c8f56)}
+  .c1{background:linear-gradient(160deg,#ff5a4d,#c4271a)}
+  .c2{background:linear-gradient(160deg,#ffcf4d,#e29a0f)}
+  .c3{background:linear-gradient(160deg,#7a45ff,#4a15c6)}
+  .c4{background:linear-gradient(160deg,#62b4ff,#2f7fd6)}
+  .c5{background:linear-gradient(160deg,#ffff5f,#c9c400);color:#1a0b2e}
+  .c6{background:linear-gradient(160deg,#ef5fc6,#c31e8f)}
+  .c7{background:linear-gradient(160deg,#ff9a4d,#e2560f)}
+  .status{margin-top:3vh;font-size:12px;color:var(--dim);display:flex;align-items:center;gap:6px}
+  .dot{width:7px;height:7px;border-radius:50%;background:#3ecf6a}
+  .dot.bad{background:#ff5a4d}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;border:1px solid rgba(255,255,255,.14);
+    padding:11px 18px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+  <div class="brandbar"><img src="assets/futures-wordmark-white.png" alt="Futures Church"><span class="tag">Dream Team · AI or Real</span></div>
+  <h1>Sound FX</h1>
+  <p class="sub">Tap to fire on the big screen. It plays there, not here — music ducks automatically.</p>
+  <div class="grid" id="grid"></div>
+  <div class="status"><span class="dot" id="dot"></span><span id="statusTxt">ready</span></div>
+  <div class="toast" id="toast"></div>
+
+<script src="config.js?v=8"></script>
+<script>
+const H={"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
+const toastEl=document.getElementById("toast");
+function toast(m){toastEl.textContent=m;toastEl.classList.add("show");setTimeout(()=>toastEl.classList.remove("show"),1400);}
+
+const SFX=[
+  {key:"correct",  emoji:"🎺", label:"Correct answer sting",     cls:"c0"},
+  {key:"wrong",    emoji:"❌", label:"Wrong buzzer",              cls:"c1"},
+  {key:"countdown",emoji:"⏳", label:"10-second countdown",       cls:"c2"},
+  {key:"drumroll", emoji:"🥁", label:"Drum roll before reveal",   cls:"c3"},
+  {key:"applause", emoji:"👏", label:"Crowd applause",            cls:"c4"},
+  {key:"fanfare",  emoji:"🎉", label:"Winner fanfare",            cls:"c5"},
+  {key:"oooh",     emoji:"😮", label:"“Oooooh!” reaction", cls:"c6"},
+  {key:"wahwah",   emoji:"😂", label:"Comedy “wah wah” trombone", cls:"c7"}
+];
+
+const grid=document.getElementById("grid");
+grid.innerHTML=SFX.map(s=>`<button class="sfxbtn ${s.cls}" data-key="${s.key}"><span class="emoji">${s.emoji}</span><span class="lbl">${s.label}</span></button>`).join("");
+
+async function fire(key){
+  const btn=grid.querySelector(`[data-key="${key}"]`);
+  btn.classList.add("firing"); setTimeout(()=>btn.classList.remove("firing"),350);
+  try{
+    const nonce=(crypto.randomUUID?crypto.randomUUID():(Date.now()+"-"+Math.random()));
+    const r=await fetch(SUPABASE_URL+"/rest/v1/air_state?id=eq.1",{method:"PATCH",
+      headers:{...H,"Prefer":"return=minimal"},
+      body:JSON.stringify({sfx_key:key, sfx_nonce:nonce, updated_at:new Date().toISOString()})});
+    if(!r.ok) throw 0;
+    document.getElementById("dot").classList.remove("bad");
+    document.getElementById("statusTxt").textContent="sent";
+  }catch(e){
+    document.getElementById("dot").classList.add("bad");
+    document.getElementById("statusTxt").textContent="couldn't reach the game — check wifi";
+    toast("Failed to send — check connection");
+  }
+}
+grid.addEventListener("click",e=>{
+  const btn=e.target.closest(".sfxbtn"); if(!btn) return;
+  fire(btn.dataset.key);
+});
+</script>
+</body>
+</html>

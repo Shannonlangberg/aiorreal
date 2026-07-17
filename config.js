@@ -7,7 +7,7 @@
 const SUPABASE_URL = "https://xaqtwehdbhydebysrest.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhcXR3ZWhkYmh5ZGVieXNyZXN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5ODAyODgsImV4cCI6MjA5OTU1NjI4OH0.Xwlm-EgJe0U2I0IAuRSAi-8eW1DPQ-3UfIzrpCeqV1s";
 
-const PLAYER_URL = "https://shannonlangberg.github.io/aiorreal/";
+const PLAYER_URL = "https://futures-ai-or-real.netlify.app/";
 const ADMIN_PIN  = "futures2026";
 
 const TIMER_SECONDS = 15;   // default question length; rounds can override (server scoring matches)
