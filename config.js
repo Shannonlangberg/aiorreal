@@ -203,9 +203,15 @@ function roundTimer(r){ return r.timer_seconds || TIMER_SECONDS; }
 
 /* Scoring: correct = base + speed bonus; Blitz / Sudden Death pay 1.5×. */
 function scoreFor(isCorrect, msTaken, timerSeconds, mode){
-  if(!isCorrect) return 0;
   const total = (timerSeconds || TIMER_SECONDS) * 1000;
   const remaining = Math.max(0, (total - (msTaken || 0)) / total);
+  if(!isCorrect){
+    // Wrong answers sting more the faster (more confidently) they were made —
+    // a snap wrong guess costs up to -400, a wrong guess right at the buzzer costs -200.
+    let pts = -(200 + Math.round(200 * remaining));
+    if(mode==="blitz" || mode==="sudden_death") pts = Math.round(pts * 1.5);
+    return pts;
+  }
   let pts = 500 + Math.round(500 * remaining);
   if(mode==="blitz" || mode==="sudden_death") pts = Math.round(pts * 1.5);
   return pts;

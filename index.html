@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#160a2e">
-<title>AI or Real — Futures</title>
+<title>Is it AI — Futures</title>
 <style>
   @font-face{font-family:'Gal Gothic';src:url('assets/fonts/GalGothic-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
   @font-face{font-family:'Rhymes Display';src:url('assets/fonts/RhymesDisplay-LightItalic.woff2') format('woff2');font-weight:300;font-style:italic;font-display:swap}
@@ -104,7 +104,7 @@
   <div class="foot">Keep this open — your score is tracked automatically</div>
 </div>
 
-<script src="config.js?v=8"></script>
+<script src="config.js?v=9"></script>
 <script>
 const H = { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" };
 async function sbGet(p){ const r=await fetch(SUPABASE_URL+"/rest/v1/"+p,{headers:H}); if(!r.ok) throw new Error("get "+r.status); return r.json(); }
@@ -137,7 +137,7 @@ function renderJoin(){
   if(lastRenderKey==="join") return; lastRenderKey="join";
   h(`<div class="fade">
       <span class="kicker">Dream Team Game</span>
-      <h1 class="title"><span class="a">AI or</span><span class="b">Real?</span></h1>
+      <h1 class="title"><span class="a">Is it</span><span class="b">AI?</span></h1>
       <p class="sub">Pop in your name, then out-smart the crowd. Right answers <b style="color:#fff">and</b> speed both score points.</p>
       <input class="name" id="nm" maxlength="24" placeholder="Your name" autocomplete="off" enterkeyhint="go">
       <button class="btn" id="joinBtn">Let's go →</button>

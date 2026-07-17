@@ -1,4 +1,4 @@
-# 🎬 AI or Real — Run of Show (Futures Dream Team)
+# 🎬 Is it AI — Run of Show (Futures Dream Team)
 
 A live, phone-based crowd game-show in the Futures brand. The big screen shows a
 photo, quote, clip or question; the crowd answers on their phones; points for being
@@ -19,12 +19,12 @@ Admin passphrase: **`futures2026`**.
 
 **Sound FX remote:** open the link above on Seth's phone. It's a separate page with 8 big
 buttons (correct sting, wrong buzzer, 10-sec countdown, drum roll, applause, winner fanfare,
-"oooh" reaction, sad-trombone wah-wah) — tapping one plays it on the *big screen* (not his
+party horn, sad-trombone wah-wah) — tapping one plays it on the *big screen* (not his
 phone), ducking the music automatically, same as the audio-round clips. It talks to the game
 over wifi with about half a second of lag, so it works from anywhere in the room, not just
-next to the laptop. Three of the eight (drum roll, applause, "oooh") are synthesized
-placeholders for now — they work, but real recorded clips would sound a lot better. Send me
-any replacement clips and I'll swap them in, same as the other audio.
+next to the laptop. All of them are real recorded clips now except the 10-second countdown,
+which is still a synthesized placeholder — send me a replacement and I'll swap it in, same as
+the others.
 
 ---
 
@@ -42,9 +42,12 @@ The game now supports much more than "AI or Real":
 Rounds run on a **15-second timer** and the screen **auto-reveals** when it hits zero, so the
 pace never stalls (turn this off with the Auto-reveal button in the control bar if you'd
 rather drive it yourself). Scoring is **validated on the server**, so nobody can cheat the
-leaderboard — the winner is legit. Answer right and fast for the most points; answer wrong and
-you get 0; **don't answer before the timer runs out and you lose 200 points** — so it always
-pays to take a guess.
+leaderboard — the winner is legit. Answer right and fast for the most points (500–1000). Answer
+**wrong and it costs you too — the faster the wrong guess, the bigger the sting** (up to -400 for
+an instant wrong answer, tapering down to -200 for a wrong guess right at the buzzer — a little
+pride tax for answering with total confidence). Don't answer at all before the timer runs out and
+it's a flat **-200**. So it always pays to take a guess — just maybe not to snap-answer out of
+pure ego.
 
 ---
 
@@ -125,5 +128,5 @@ player, every answer and every score from the server, and the next time a phone 
 too, so if someone re-scans the QR they get a completely fresh join screen. Your questions
 are untouched. Same links. Have a blast. 💜
 
-*(Tech: hosted on GitHub Pages; questions, scores + media in Supabase. Change the admin
+*(Tech: hosted on Netlify; questions, scores + media in Supabase. Change the admin
 passphrase or the Blitz timer any time — passphrase in config.js, timers per-round in admin.)*
