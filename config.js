@@ -107,7 +107,7 @@ async function loadRounds(){
   try{
     const rows = await fetch(
       SUPABASE_URL + "/rest/v1/air_rounds?active=eq.true&order=ord.asc&select=*",
-      { headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY } }
+      { headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY }, cache: "no-store" }
     ).then(r => r.ok ? r.json() : []);
     if (Array.isArray(rows) && rows.length){
       ROUNDS = rows.map((r, i) => ({

@@ -98,7 +98,7 @@
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="config.js"></script>
+<script src="config.js?v=3"></script>
 <script>
 const KEY_H = { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" };
 const toast=(m)=>{const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800);};
