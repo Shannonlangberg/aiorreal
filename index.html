@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0b0620">
+<title>AI or Real — Futures</title>
+<style>
+  :root{
+    --bg1:#160a33; --bg2:#3a0f52; --bg3:#0b0620;
+    --ai:#7c5cff; --aiglow:#a78bfa;
+    --real:#ff4d8d; --realglow:#ff8fb3;
+    --gold:#ffd54a; --ink:#ffffff; --dim:rgba(255,255,255,.62);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:radial-gradient(120% 100% at 50% 0%, var(--bg2) 0%, var(--bg1) 42%, var(--bg3) 100%);
+    min-height:100dvh; overflow-x:hidden;
+    -webkit-user-select:none; user-select:none;
+  }
+  .wrap{min-height:100dvh;display:flex;flex-direction:column;padding:20px 18px 28px;max-width:520px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:800;letter-spacing:.06em;font-size:13px;opacity:.9;text-transform:uppercase}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--ai),var(--real));box-shadow:0 0 12px var(--aiglow)}
+  .conn{margin-left:auto;font-size:11px;color:var(--dim);display:flex;align-items:center;gap:6px}
+  .conn .pip{width:7px;height:7px;border-radius:50%;background:#41d67a;box-shadow:0 0 8px #41d67a}
+  .conn.bad .pip{background:#ffb020;box-shadow:0 0 8px #ffb020}
+  .center{flex:1;display:flex;flex-direction:column;justify-content:center}
+  h1.big{font-size:clamp(30px,9vw,44px);line-height:1.03;margin:6px 0 4px;font-weight:900;letter-spacing:-.02em}
+  .grad{background:linear-gradient(100deg,var(--aiglow),var(--realglow));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--dim);font-size:15px;line-height:1.45}
+  /* join */
+  input.name{width:100%;margin-top:22px;padding:17px 18px;border-radius:16px;border:1.5px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.06);color:#fff;font-size:19px;font-weight:600;outline:none}
+  input.name:focus{border-color:var(--aiglow);background:rgba(255,255,255,.1)}
+  input.name::placeholder{color:rgba(255,255,255,.4)}
+  .btn{width:100%;margin-top:14px;padding:18px;border:none;border-radius:16px;font-size:18px;font-weight:800;color:#fff;
+    background:linear-gradient(100deg,var(--ai),var(--real));box-shadow:0 12px 34px -10px var(--ai);cursor:pointer;transition:transform .08s}
+  .btn:active{transform:scale(.98)}
+  .btn[disabled]{opacity:.5}
+  .tiny{font-size:12px;color:var(--dim);margin-top:16px;text-align:center;line-height:1.5}
+  /* cards */
+  .card{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:26px 22px;text-align:center;backdrop-filter:blur(6px)}
+  .pill{display:inline-block;padding:6px 13px;border-radius:999px;background:rgba(255,255,255,.1);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+  .qtext{font-size:clamp(19px,5.4vw,24px);line-height:1.4;font-weight:600;margin:16px 4px 4px}
+  .qimg{width:100%;border-radius:16px;margin:16px 0 2px;display:block;border:1px solid rgba(255,255,255,.12)}
+  /* vote buttons */
+  .votes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+  .vote{padding:30px 10px 26px;border-radius:20px;border:2px solid transparent;font-size:26px;font-weight:900;letter-spacing:.02em;cursor:pointer;transition:transform .08s,filter .1s;color:#fff}
+  .vote small{display:block;font-size:12px;font-weight:700;letter-spacing:.12em;opacity:.85;margin-top:6px}
+  .vote.ai{background:linear-gradient(160deg,#6b45ff,#3f1fb0)}
+  .vote.real{background:linear-gradient(160deg,#ff4d8d,#c31e6a)}
+  .vote:active{transform:scale(.97)}
+  .vote[disabled]{opacity:.35;filter:grayscale(.3)}
+  .timer{font-size:14px;color:var(--dim);margin-top:18px;font-weight:700;letter-spacing:.04em}
+  .ring{--p:100;position:relative;width:64px;height:64px;margin:6px auto 0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
+  /* result */
+  .result-emoji{font-size:60px;line-height:1;margin-bottom:6px}
+  .verdict{font-size:32px;font-weight:900;margin:2px 0}
+  .verdict.good{color:#5ce08a}.verdict.bad{color:var(--realglow)}
+  .pts{font-size:20px;font-weight:800;color:var(--gold);margin-top:4px}
+  .scorebar{margin-top:24px;font-size:14px;color:var(--dim)}
+  .scorebar b{color:#fff;font-size:17px}
+  .spin{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;animation:sp 1s linear infinite;margin:14px auto 0}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .fade{animation:fade .4s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .foot{text-align:center;font-size:11px;color:rgba(255,255,255,.32);margin-top:20px;letter-spacing:.05em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><span class="dot"></span> Futures · AI or Real
+    <span class="conn" id="conn"><span class="pip"></span><span id="connTxt">live</span></span>
+  </div>
+  <div class="center" id="app"></div>
+  <div class="foot">Keep this open — your score is tracked automatically ✨</div>
+</div>
+
+<script src="config.js"></script>
+<script>
+/* ---------- tiny supabase REST helpers ---------- */
+const H = {
+  "apikey": SUPABASE_KEY,
+  "Authorization": "Bearer " + SUPABASE_KEY,
+  "Content-Type": "application/json"
+};
+async function sbGet(path){
+  const r = await fetch(SUPABASE_URL+"/rest/v1/"+path, {headers:H});
+  if(!r.ok) throw new Error("get "+r.status);
+  return r.json();
+}
+async function sbRpc(fn, body){
+  const r = await fetch(SUPABASE_URL+"/rest/v1/rpc/"+fn, {method:"POST",headers:H,body:JSON.stringify(body||{})});
+  if(!r.ok) throw new Error("rpc "+r.status);
+  return r.json();
+}
+async function sbInsert(table, row){
+  const r = await fetch(SUPABASE_URL+"/rest/v1/"+table, {
+    method:"POST", headers:{...H,"Prefer":"return=representation"}, body:JSON.stringify(row)
+  });
+  return r; // caller inspects
+}
+
+/* ---------- local persistent state ---------- */
+const LS = {
+  get player(){ try{return JSON.parse(localStorage.getItem("air_player"))}catch(e){return null} },
+  set player(v){ localStorage.setItem("air_player", JSON.stringify(v)) },
+  get answers(){ try{return JSON.parse(localStorage.getItem("air_answers"))||{}}catch(e){return {}} },
+  set answers(v){ localStorage.setItem("air_answers", JSON.stringify(v)) }
+};
+let player = LS.player;         // {id,name}
+let answers = LS.answers;       // { "3": {choice,correct,points} }
+let state = {phase:"lobby",current_round:0,round_started_at:null};
+let lastRenderKey = "";
+let submitting = false;
+
+function myScore(){ return Object.values(answers).reduce((s,a)=>s+(a.points||0),0); }
+function roundByN(n){ return ROUNDS.find(r=>r.n===n); }
+
+const app = document.getElementById("app");
+function h(html){ app.innerHTML = html; }
+
+/* ---------- JOIN ---------- */
+function renderJoin(){
+  lastRenderKey="join";
+  h(`
+    <div class="fade">
+      <div class="pill">Dream Team Game</div>
+      <h1 class="big">AI or <span class="grad">Real?</span></h1>
+      <p class="sub">Pop in your name, then get ready to out-smart the crowd. Right answers <b style="color:#fff">and</b> speed both score points.</p>
+      <input class="name" id="nm" maxlength="24" placeholder="Your name" autocomplete="off" enterkeyhint="go">
+      <button class="btn" id="joinBtn">Let's go →</button>
+      <div class="tiny">500 legends. One leaderboard. No pressure. 😅</div>
+    </div>`);
+  const nm=document.getElementById("nm"), b=document.getElementById("joinBtn");
+  nm.focus();
+  const go=async()=>{
+    const name=(nm.value||"").trim();
+    if(name.length<1){ nm.focus(); return; }
+    b.disabled=true; b.textContent="Joining…";
+    try{
+      const r=await sbInsert("air_players",{name});
+      const data=await r.json();
+      if(!r.ok||!data[0]) throw new Error("join failed");
+      player={id:data[0].id,name}; LS.player=player;
+      lastRenderKey=""; render();
+    }catch(e){
+      b.disabled=false; b.textContent="Let's go →";
+      alert("Hmm, couldn't join — check signal and tap again.");
+    }
+  };
+  b.onclick=go;
+  nm.addEventListener("keydown",e=>{ if(e.key==="Enter") go(); });
+}
+
+/* ---------- LOBBY (joined, waiting) ---------- */
+function renderLobby(){
+  const key="lobby"; if(lastRenderKey===key) return; lastRenderKey=key;
+  h(`
+    <div class="card fade">
+      <div class="result-emoji">🎉</div>
+      <div class="verdict">You're in!</div>
+      <p class="sub" style="margin-top:8px">Nice one, <b style="color:#fff">${esc(player.name)}</b>.<br>Eyes on the big screen — we're about to start.</p>
+      <div class="spin"></div>
+    </div>`);
+}
+
+/* ---------- QUESTION ---------- */
+function renderQuestion(){
+  const round=roundByN(state.current_round);
+  if(!round){ renderLobby(); return; }
+  const answered=answers[round.n];
+  const key="q"+round.n+(answered?"-done":"-open");
+  if(lastRenderKey===key && answered) return;      // don't re-render locked state
+  if(lastRenderKey.startsWith("q"+round.n) && !answered && lastRenderKey===key) {/*keep timer live*/}
+  lastRenderKey=key;
+
+  const body = round.type==="image"
+    ? `<img class="qimg" src="${round.img}" alt="Round ${round.n}" onerror="this.style.display='none'">`
+    : `<div class="qtext">“${esc(round.text)}”</div>`;
+
+  if(answered){
+    h(`
+      <div class="card fade">
+        <div class="pill">Round ${round.n} · Locked in ✓</div>
+        <div class="result-emoji">🔒</div>
+        <div class="verdict">Answer locked</div>
+        <p class="sub" style="margin-top:6px">You said <b style="color:#fff;text-transform:uppercase">${answered.choice}</b>. Hang tight for the reveal on the big screen…</p>
+        <div class="scorebar">Your score: <b>${myScore().toLocaleString()}</b></div>
+      </div>`);
+    return;
+  }
+
+  h(`
+    <div class="fade">
+      <div class="card" style="padding:20px 18px">
+        <div class="pill">Round ${round.n} · ${round.label}</div>
+        ${body}
+      </div>
+      <div class="votes">
+        <button class="vote ai" id="vAi">AI<small>generated</small></button>
+        <button class="vote real" id="vReal">REAL<small>a human made it</small></button>
+      </div>
+      <div class="timer" id="timer">Tap your answer!</div>
+    </div>`);
+  document.getElementById("vAi").onclick=()=>submit(round,"ai");
+  document.getElementById("vReal").onclick=()=>submit(round,"real");
+  startTimer();
+}
+
+let timerRAF=null;
+function startTimer(){
+  cancelAnimationFrame(timerRAF);
+  const el=document.getElementById("timer");
+  const started = state.round_started_at ? new Date(state.round_started_at).getTime() : Date.now();
+  const total = TIMER_SECONDS*1000;
+  const tick=()=>{
+    if(!document.getElementById("timer")) return;
+    const left=Math.max(0, total-(Date.now()-started));
+    const s=Math.ceil(left/1000);
+    el.textContent = left>0 ? `⏱ ${s}s — faster = more points` : "Time's nearly up — lock it in!";
+    timerRAF=requestAnimationFrame(tick);
+  };
+  tick();
+}
+
+async function submit(round, choice){
+  if(submitting || answers[round.n]) return;
+  submitting=true;
+  const started = state.round_started_at ? new Date(state.round_started_at).getTime() : Date.now();
+  const ms = Math.max(0, Date.now()-started);
+  const correct = choice===round.answer;
+  const points = scoreFor(correct, ms);
+  // lock locally first (so a network drop never loses their answer)
+  answers[round.n]={choice,correct,points}; LS.answers=answers;
+  lastRenderKey=""; renderQuestion();
+  submitting=false;
+  // push to server with a few retries; 409 = already recorded = fine
+  for(let i=0;i<4;i++){
+    try{
+      const r=await sbInsert("air_answers",{player_id:player.id,round:round.n,choice,is_correct:correct,points,ms_taken:ms});
+      if(r.ok || r.status===409) return;
+    }catch(e){}
+    await new Promise(res=>setTimeout(res,700));
+  }
+}
+
+/* ---------- REVEAL ---------- */
+function renderReveal(){
+  const round=roundByN(state.current_round);
+  if(!round){ renderLobby(); return; }
+  const key="rev"+round.n; if(lastRenderKey===key) return; lastRenderKey=key;
+  const a=answers[round.n];
+  const answerLabel = round.answer.toUpperCase();
+  if(!a){
+    h(`
+      <div class="card fade">
+        <div class="pill">Round ${round.n} · Reveal</div>
+        <div class="result-emoji">${round.answer==="ai"?"🤖":"📷"}</div>
+        <div class="verdict">It was ${answerLabel}</div>
+        <p class="sub" style="margin-top:6px">You sat this one out — jump on the next!</p>
+        <div class="scorebar">Your score: <b>${myScore().toLocaleString()}</b></div>
+      </div>`);
+    return;
+  }
+  h(`
+    <div class="card fade">
+      <div class="pill">Round ${round.n} · Reveal</div>
+      <div class="result-emoji">${a.correct?"✅":"❌"}</div>
+      <div class="verdict ${a.correct?"good":"bad"}">${a.correct?"Correct!":"Not this time"}</div>
+      <p class="sub" style="margin-top:4px">It was <b style="color:#fff">${answerLabel}</b>. You guessed <b style="color:#fff;text-transform:uppercase">${a.choice}</b>.</p>
+      ${a.correct?`<div class="pts">+${a.points.toLocaleString()} pts</div>`:``}
+      <div class="scorebar">Your score: <b>${myScore().toLocaleString()}</b></div>
+    </div>`);
+}
+
+/* ---------- LEADERBOARD / FINISHED ---------- */
+function renderEnd(){
+  const key="end"; if(lastRenderKey===key) return; lastRenderKey=key;
+  h(`
+    <div class="card fade">
+      <div class="result-emoji">🏆</div>
+      <div class="verdict">That's a wrap!</div>
+      <p class="sub" style="margin-top:6px">Final scores are on the big screen.</p>
+      <div class="scorebar" style="margin-top:18px">You finished with</div>
+      <div class="pts" style="font-size:34px;margin-top:2px">${myScore().toLocaleString()} pts</div>
+      <p class="tiny" style="margin-top:18px">Thanks for playing, ${esc(player.name)}. You're a legend. 💜</p>
+    </div>`);
+}
+
+/* ---------- router ---------- */
+function render(){
+  if(!player){ renderJoin(); return; }
+  switch(state.phase){
+    case "question": renderQuestion(); break;
+    case "reveal": renderReveal(); break;
+    case "leaderboard":
+    case "finished": renderEnd(); break;
+    default: renderLobby();
+  }
+}
+
+/* ---------- polling ---------- */
+const conn=document.getElementById("conn"), connTxt=document.getElementById("connTxt");
+let fails=0;
+async function poll(){
+  try{
+    const rows=await sbGet("air_state?id=eq.1&select=phase,current_round,round_started_at");
+    if(rows&&rows[0]){
+      const s=rows[0];
+      const changed = s.phase!==state.phase || s.current_round!==state.current_round || s.round_started_at!==state.round_started_at;
+      state=s;
+      if(changed){ lastRenderKey=""; }
+      render();
+    }
+    fails=0; conn.classList.remove("bad"); connTxt.textContent="live";
+  }catch(e){
+    fails++; if(fails>=2){ conn.classList.add("bad"); connTxt.textContent="reconnecting"; }
+  }
+}
+function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+render();
+poll();
+setInterval(poll, 1500);
+</script>
+</body>
+</html>
