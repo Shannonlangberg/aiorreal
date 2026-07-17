@@ -32,7 +32,9 @@ The game now supports much more than "AI or Real":
 Rounds run on a **15-second timer** and the screen **auto-reveals** when it hits zero, so the
 pace never stalls (turn this off with the Auto-reveal button in the control bar if you'd
 rather drive it yourself). Scoring is **validated on the server**, so nobody can cheat the
-leaderboard — the winner is legit.
+leaderboard — the winner is legit. Answer right and fast for the most points; answer wrong and
+you get 0; **don't answer before the timer runs out and you lose 200 points** — so it always
+pays to take a guess.
 
 ---
 
@@ -82,6 +84,15 @@ One primary button (or **spacebar**) drives everything; its label tells you what
 **Reset** (tap twice) clears everyone to the lobby.
 
 For **audio rounds**, press ▶ on the audio player on the big screen so the room hears it.
+
+**Peek the leaderboard mid-game:** press **L** (or the **Leaderboard** button) any time — even
+mid-round — and it shows the current standings. Press **L** again (it now says **◀ Back to
+game**) and you're dropped right back where you left off, timer and all. Handy for building
+excitement partway through without losing your place.
+
+**Running over time?** While the leaderboard is up, the primary button says **Crown winner ▶**
+— press it (or Space) and the game ends right there with whoever's on top, even if you haven't
+gotten through all 12 rounds. No need to play every round to get a winner.
 
 ---
 

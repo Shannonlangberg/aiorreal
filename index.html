@@ -245,18 +245,37 @@ async function submit(r, idx){
   }
 }
 
+const TIMEOUT_PENALTY=-200;
+async function submitTimeout(r){
+  // ran out the clock with no answer at all — counts as wrong, with a fixed penalty
+  answers[r.n]={i:null,correct:false,points:TIMEOUT_PENALTY,mode:r.mode,timeout:true}; LS.answers=answers;
+  for(let k=0;k<4;k++){
+    try{ const rr=await sbInsert("air_answers",{player_id:player.id,round:r.n,choice:"__timeout__",is_correct:false,points:TIMEOUT_PENALTY,ms_taken:roundTimer(r)*1000});
+      if(rr.ok||rr.status===409) return; }catch(e){}
+    await new Promise(x=>setTimeout(x,700));
+  }
+}
+
 /* ---------- REVEAL ---------- */
 function renderReveal(){
   const r=roundByN(state.current_round);
   if(!r){ renderLobby(); return; }
   const key="rev"+r.n; if(lastRenderKey===key) return; lastRenderKey=key;
-  const a=answers[r.n];
+  let a=answers[r.n];
   const correctLabel=pickLabel(r,r.answer_index);
   document.body.classList.remove("dead-screen");
   if(!a){
+    submitTimeout(r);       // fire-and-forget: the local answer is set synchronously before any await
+    a=answers[r.n];
+  }
+  if(a.timeout){
+    const wipeout = (r.mode==="sudden_death");
+    if(wipeout) document.body.classList.add("dead-screen");
     h(`<div class="card fade"><div class="pill">Round ${r.n} · Reveal</div>
-        <div class="result-emoji">✅</div><div class="verdict">Answer: ${esc(correctLabel)}</div>
-        <p class="sub" style="margin-top:6px">You sat this one out — jump on the next!</p>
+        <div class="result-emoji">${wipeout?"💀":"⏱️"}</div>
+        <div class="verdict ${wipeout?'dead':'bad'}">${wipeout?"Wiped out!":"Time's up"}</div>
+        <p class="sub" style="margin-top:6px">You didn't answer in time. Correct answer: <b style="color:#fff">${esc(correctLabel)}</b>.</p>
+        <div class="pts" style="color:#ff9a90">${a.points.toLocaleString()} pts</div>
         <div class="scorebar">Your score: <b>${myScore().toLocaleString()}</b></div></div>`);
     return;
   }

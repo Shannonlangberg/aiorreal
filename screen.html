@@ -261,6 +261,8 @@ function updateStatus(){
   else if(state.phase==="question") nb.textContent="Reveal ▶";
   else if(state.phase==="reveal") nb.textContent=(state.current_round<ROUNDS.length)?"Next round ▶":"Show leaderboard ▶";
   else if(state.phase==="leaderboard") nb.textContent="Crown winner ▶"; else nb.textContent="—";
+  const bb=document.getElementById("btnBoard");
+  bb.textContent = state.phase==="leaderboard" ? "◀ Back to game" : "Leaderboard";
 }
 async function advance(){
   const p=state.phase, n=state.current_round;
@@ -279,7 +281,30 @@ async function prev(){
   await poll();
 }
 async function doReveal(){ if(state.phase==="question"){ await setState({phase:"reveal"}); await poll(); } }
-async function doBoard(){ await setState({phase:"leaderboard"}); await poll(); }
+let preBoardState=null;
+async function doBoard(){
+  if(state.phase==="finished") return;
+  if(state.phase==="leaderboard"){
+    // second press: hide it and pick up exactly where we left off
+    if(preBoardState){
+      const patch={phase:preBoardState.phase, current_round:preBoardState.current_round};
+      if(preBoardState.phase==="question"){
+        patch.round_started_at=new Date(Date.now()-preBoardState.elapsed).toISOString();
+      } else {
+        patch.round_started_at=preBoardState.round_started_at;
+      }
+      await setState(patch);
+      preBoardState=null;
+    } else {
+      await setState({phase:"reveal"});
+    }
+  } else {
+    const elapsed=(state.phase==="question"&&state.round_started_at)?(Date.now()-new Date(state.round_started_at).getTime()):0;
+    preBoardState={phase:state.phase, current_round:state.current_round, round_started_at:state.round_started_at, elapsed};
+    await setState({phase:"leaderboard"});
+  }
+  await poll();
+}
 
 const autoBtn=document.getElementById("btnAuto");
 function paintAuto(){ autoBtn.textContent="Auto-reveal: "+(autoReveal?"ON":"OFF"); autoBtn.style.opacity=autoReveal?"1":".6"; }
