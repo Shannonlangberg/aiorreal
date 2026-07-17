@@ -98,8 +98,11 @@ For **audio rounds**, press ▶ on the audio player on the big screen so the roo
 
 ## 🔁 Between two services
 
-**Reset** (twice) before the second service — clears players and scores, keeps your
-questions. Same links. Have a blast. 💜
+**Reset** (twice) before the second service — this is a *true* full reset: it wipes every
+player, every answer and every score from the server, and the next time a phone checks in
+(within ~1-2 seconds, automatically — no refresh needed) it forgets its old name and score
+too, so if someone re-scans the QR they get a completely fresh join screen. Your questions
+are untouched. Same links. Have a blast. 💜
 
 *(Tech: hosted on GitHub Pages; questions, scores + media in Supabase. Change the admin
 passphrase or the Blitz timer any time — passphrase in config.js, timers per-round in admin.)*
