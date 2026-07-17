@@ -42,7 +42,7 @@ const ROUNDS = [
   },
   {
     n: 2, type: "image", difficulty: "Easy", label: "Look closely…",
-    img: ph("Round 2 · Obvious AI image", "Swap in an easy AI pic — dodgy hands, warped text.", "#5a2891", "#2f1257"),
+    img: ph("Round 2 · Obvious AI image", "Swap in an easy AI pic — dodgy hands, warped text.", "#5d1fec", "#26105e"),
     answer: "ai",
     reveal: "AI. The giveaway is almost always the hands — count the fingers, and look where the thumb joins. AI still fumbles hands."
   },
@@ -54,7 +54,7 @@ const ROUNDS = [
   },
   {
     n: 4, type: "image", difficulty: "Medium", label: "Real person, or generated?",
-    img: ph("Round 4 · AI portrait", "A convincing AI face. Answer is set to AI.", "#3c1e70", "#1e0f47"),
+    img: ph("Round 4 · AI portrait", "A convincing AI face. Answer is set to AI.", "#c45236", "#5a2416"),
     answer: "ai",
     reveal: "AI portrait. Look for the tells: an earring that melts into the hair, skin that's a little too flawless, and a background that dissolves into mush."
   },
@@ -66,7 +66,7 @@ const ROUNDS = [
   },
   {
     n: 6, type: "image", difficulty: "Medium", label: "This one's a trap…",
-    img: ph("Round 6 · The trap: a REAL photo", "A real photo that looks fake. Answer is set to REAL.", "#7a1e50", "#45102f"),
+    img: ph("Round 6 · The trap: a REAL photo", "A real photo that looks fake. Answer is set to REAL.", "#e444b9", "#5f1a4c"),
     answer: "real",
     reveal: "REAL photo! Gotcha. Sometimes reality looks more fake than fake — weird light, strange angles and lucky timing fool us into yelling 'AI!'"
   },
@@ -84,7 +84,7 @@ const ROUNDS = [
   },
   {
     n: 9, type: "image", difficulty: "Brutal", label: "Last image — trust your gut",
-    img: ph("Round 9 · Brutal, near-perfect AI", "A super-convincing AI image. Answer is set to AI.", "#2a1560", "#160a33"),
+    img: ph("Round 9 · Brutal, near-perfect AI", "A super-convincing AI image. Answer is set to AI.", "#ff8432", "#7a3a10"),
     answer: "ai",
     reveal: "AI — and almost flawless. Look for the tiny tells: text that turns to gibberish, jewellery that doesn't connect, or shadows falling the wrong way. If this fooled you, you're in good company."
   },
