@@ -55,6 +55,14 @@
   .tapwrap{position:relative;display:inline-block;margin-top:2vh}
   .tapwrap .lab{position:absolute;width:5vh;height:5vh;border-radius:1vh;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:2.6vh}
   audio{margin-top:2.4vh;width:56vw;max-width:760px;filter:hue-rotate(12deg)}
+  /* image-pick: multiple uploaded photos to choose between */
+  .imgopts{display:flex;flex-wrap:wrap;gap:2vh;justify-content:center;margin-top:2.6vh;max-width:84vw}
+  .imgopt{position:relative;width:min(22vh,38vw);height:min(22vh,38vw);border-radius:1.6vh;overflow:hidden;border:2px solid rgba(255,255,255,.18);box-shadow:0 20px 50px -20px rgba(0,0,0,.75);transition:opacity .3s,border-color .3s}
+  .imgopt img{width:100%;height:100%;object-fit:cover;display:block}
+  .imgopt .lab{position:absolute;top:1vh;left:1vh;width:4vh;height:4vh;border-radius:1vh;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:2.2vh}
+  .imgopt .pct{position:absolute;right:1vh;bottom:1vh;padding:.5vh 1.2vh;border-radius:999px;background:rgba(0,0,0,.65);font-size:1.8vh}
+  .imgopt.right{border-color:var(--lemon);box-shadow:0 0 0 3px var(--lemon)}
+  .imgopt.dim{opacity:.4}
   .audionote{margin-top:1.4vh;font-size:2vh;color:var(--dim)}
   .opts{display:flex;flex-wrap:wrap;gap:1.6vh;justify-content:center;margin-top:3vh;max-width:82vw}
   .opt{display:flex;align-items:center;gap:1.2vh;padding:1.6vh 2.4vh;border-radius:1.4vh;font-size:3vh;min-width:22vw;justify-content:flex-start}
@@ -161,7 +169,7 @@
   <button class="cbtn warn" id="btnReset">Reset</button>
 </div>
 
-<script src="config.js?v=5"></script>
+<script src="config.js?v=6"></script>
 <script>
 const H={"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
 async function sbGet(p){const r=await fetch(SUPABASE_URL+"/rest/v1/"+p,{headers:H});if(!r.ok)throw 0;return r.json();}
@@ -230,6 +238,9 @@ function renderQuestion(r){
       <div class="lab" style="left:1.2vh;top:3.2vh">A</div><div class="lab" style="right:1.2vh;top:3.2vh">B</div>
       <div class="lab" style="left:1.2vh;bottom:1.2vh">C</div><div class="lab" style="right:1.2vh;bottom:1.2vh">D</div></div>
       <div class="audionote">Tap a quadrant on your phone</div>`;
+  } else if(r.interaction==="imgpick"){
+    const tiles = r.options.map((o,i)=>`<div class="imgopt"><span class="lab">${LETTERS[i]}</span><img src="${r.option_images[i]||''}" alt="${esc(o)}"></div>`).join("");
+    middle=`<div class="imgopts">${tiles}</div>`;
   } else {
     const codey = /\n/.test(r.content) && /[=;{}()]/.test(r.content);
     const body = r.content?`<div class="qbody ${codey?'code':''}">${esc(r.content)}</div>`:``;
@@ -269,11 +280,22 @@ async function renderReveal(r){
   try{t=await sbRpc("air_tally",{r:r.n})||t;}catch(e){}
   const total=Number(t.total)||0, correct=Number(t.correct)||0, counts=t.counts||{};
   const n=optCount(r);
-  let rows="";
-  for(let i=0;i<n;i++){
-    const c=Number(counts[String(i)])||0; const pct=total?Math.round(c/total*100):0;
-    rows+=`<div class="trow ${i===ci?'right':''}"><div class="tl">${LETTERS[i]}</div>
-      <div class="barwrap"><div class="bar b${i}" style="width:${Math.max(pct,7)}%">${esc(optLabel(r,i))} · ${pct}%</div></div></div>`;
+  let tallyBlock;
+  if(r.interaction==="imgpick"){
+    let tiles="";
+    for(let i=0;i<n;i++){
+      const c=Number(counts[String(i)])||0; const pct=total?Math.round(c/total*100):0;
+      tiles+=`<div class="imgopt ${i===ci?'right':'dim'}"><span class="lab">${LETTERS[i]}</span><img src="${r.option_images[i]||''}" alt=""><span class="pct">${pct}%</span></div>`;
+    }
+    tallyBlock=`<div class="imgopts">${tiles}</div>`;
+  } else {
+    let rows="";
+    for(let i=0;i<n;i++){
+      const c=Number(counts[String(i)])||0; const pct=total?Math.round(c/total*100):0;
+      rows+=`<div class="trow ${i===ci?'right':''}"><div class="tl">${LETTERS[i]}</div>
+        <div class="barwrap"><div class="bar b${i}" style="width:${Math.max(pct,7)}%">${esc(optLabel(r,i))} · ${pct}%</div></div></div>`;
+    }
+    tallyBlock=`<div class="tally">${rows}</div>`;
   }
   const mbadge = r.mode==="blitz"?`<span class="qhead"><span class="m">⚡ Blitz · 1.5× points</span></span>`:(r.mode==="sudden_death"?`<span class="qhead"><span class="m sd">💀 Sudden Death</span></span>`:"");
   stage.innerHTML=`<div class="fade" style="width:100%;display:flex;flex-direction:column;align-items:center">
@@ -281,7 +303,7 @@ async function renderReveal(r){
     <div class="ans c${ci} pop">${esc(optLabel(r,ci))}</div>
     ${mbadge}
     <div class="revealfact">${esc(r.reveal)}</div>
-    <div class="tally">${rows}</div>
+    ${tallyBlock}
     <div class="gotright">🎯 ${correct.toLocaleString()} of ${total.toLocaleString()} nailed it</div></div>`;
 }
 
