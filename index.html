@@ -127,6 +127,7 @@ function h(html){ app.innerHTML = html; }
 
 /* ---------- JOIN ---------- */
 function renderJoin(){
+  if(lastRenderKey==="join") return;   // don't redraw every poll (was causing flashing)
   lastRenderKey="join";
   h(`
     <div class="fade">
