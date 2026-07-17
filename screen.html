@@ -203,11 +203,23 @@ async function render(){
   const key=state.phase+"|"+state.current_round;
   const dyn=["question","reveal","lobby","leaderboard"].includes(state.phase);
   if(key===renderKey&&!dyn) return;
-  if(state.phase==="lobby"){ setDim(false);setMode("normal");hideBurst(); if(renderKey!==key){renderLobby();renderKey=key;} refreshLobby(); }
+  if(state.phase==="welcome"){ setDim(false);setMode("normal");hideBurst(); if(renderKey!==key){renderWelcome();renderKey=key;} }
+  else if(state.phase==="lobby"){ setDim(false);setMode("normal");hideBurst(); if(renderKey!==key){renderLobby();renderKey=key;} refreshLobby(); }
   else if(state.phase==="question"){ setDim(true);setMode(r&&r.mode);hideBurst(); if(renderKey!==key){renderQuestion(r);renderKey=key;} refreshQuestion(r); }
   else if(state.phase==="reveal"){ setDim(true);setMode(r&&r.mode); if(renderKey!==key){renderReveal(r);renderKey=key;} }
   else if(state.phase==="leaderboard"||state.phase==="finished"){ setDim(false);setMode("normal"); if(renderKey!==key){renderBoard();renderKey=key;} }
+  else if(state.phase==="end"){ setDim(false);setMode("normal");hideBurst(); if(renderKey!==key){renderEnd();renderKey=key;} }
   updateStatus();
+}
+
+function renderWelcome(){
+  stage.innerHTML=`<div class="fade">
+    <div class="lbtitle"><span class="a">Welcome to</span><span class="b grad">Dream Team!</span></div>
+    <div class="lobby-sub" style="margin-top:2.4vh">Let's get started…</div></div>`;
+}
+function renderEnd(){
+  stage.innerHTML=`<div class="fade">
+    <div class="lbtitle"><span class="a">Thanks for playing</span><span class="b grad">Is it AI</span></div></div>`;
 }
 
 function renderLobby(){
@@ -328,30 +340,36 @@ async function renderBoard(){
 }
 
 function updateStatus(){
-  const map={lobby:"Lobby (players joining)",question:"Question OPEN",reveal:"Reveal shown",leaderboard:"Leaderboard",finished:"Finished"};
+  const map={lobby:"Lobby (players joining)",welcome:"Welcome screen",question:"Question OPEN",reveal:"Reveal shown",leaderboard:"Leaderboard",finished:"Finished",end:"Holding screen"};
   statusEl.innerHTML=`Phase: <b>${map[state.phase]||state.phase}</b>${state.current_round?` · Round <b>${state.current_round}/${ROUNDS.length}</b>`:""}`;
   const nb=document.getElementById("btnNext");
   if(state.phase==="lobby") nb.textContent="Start ▶";
+  else if(state.phase==="welcome") nb.textContent="Start game ▶";
   else if(state.phase==="question") nb.textContent="Reveal ▶";
   else if(state.phase==="reveal") nb.textContent=(state.current_round<ROUNDS.length)?"Next round ▶":"Show leaderboard ▶";
-  else if(state.phase==="leaderboard") nb.textContent="Crown winner ▶"; else nb.textContent="—";
+  else if(state.phase==="leaderboard") nb.textContent="Crown winner ▶";
+  else if(state.phase==="finished") nb.textContent="Wrap up ▶"; else nb.textContent="—";
   const bb=document.getElementById("btnBoard");
   bb.textContent = state.phase==="leaderboard" ? "◀ Back to game" : "Leaderboard";
 }
 async function advance(){
   const p=state.phase, n=state.current_round;
-  if(p==="lobby") await setState({phase:"question",current_round:1,round_started_at:new Date().toISOString()});
+  if(p==="lobby") await setState({phase:"welcome"});
+  else if(p==="welcome") await setState({phase:"question",current_round:1,round_started_at:new Date().toISOString()});
   else if(p==="question") await setState({phase:"reveal"});
   else if(p==="reveal"){ if(n<ROUNDS.length) await setState({phase:"question",current_round:n+1,round_started_at:new Date().toISOString()}); else await setState({phase:"leaderboard"}); }
   else if(p==="leaderboard") await setState({phase:"finished"});
+  else if(p==="finished") await setState({phase:"end"});
   await poll();
 }
 async function prev(){
   const p=state.phase, n=state.current_round;
-  if(p==="finished") await setState({phase:"leaderboard"});
+  if(p==="end") await setState({phase:"finished"});
+  else if(p==="finished") await setState({phase:"leaderboard"});
   else if(p==="leaderboard") await setState({phase:"reveal",current_round:ROUNDS.length});
   else if(p==="reveal") await setState({phase:"question",round_started_at:new Date().toISOString()});
-  else if(p==="question"){ if(n>1) await setState({phase:"reveal",current_round:n-1}); else await setState({phase:"lobby",current_round:0,round_started_at:null}); }
+  else if(p==="question"){ if(n>1) await setState({phase:"reveal",current_round:n-1}); else await setState({phase:"welcome",current_round:0,round_started_at:null}); }
+  else if(p==="welcome") await setState({phase:"lobby"});
   await poll();
 }
 async function doReveal(){ if(state.phase==="question"){ await setState({phase:"reveal"}); await poll(); } }
@@ -483,7 +501,9 @@ const SFX_MAP={
 };
 const sfxPlayer=document.getElementById("sfxPlayer");
 let lastSfxNonce=undefined; // undefined = haven't baselined yet; null/string after that
+let sfxBusy=false; // guards against overlapping polls (slow wifi) double-firing the same clip
 async function pollSfx(){
+  if(sfxBusy) return; sfxBusy=true;
   try{
     const rows=await sbGet("air_state?id=eq.1&select=sfx_key,sfx_nonce");
     const row=rows&&rows[0];
@@ -495,6 +515,7 @@ async function pollSfx(){
       if(src){ sfxPlayer.src=src; sfxPlayer.currentTime=0; const p=sfxPlayer.play(); if(p&&p.catch) p.catch(()=>{}); }
     }
   }catch(e){}
+  finally{ sfxBusy=false; }
 }
 
 (async()=>{ await loadRounds(); render(); poll(); setInterval(poll,1200); pollSfx(); setInterval(pollSfx,600); })();
