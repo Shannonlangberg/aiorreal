@@ -343,8 +343,8 @@ function updateStatus(){
   const map={lobby:"Lobby (players joining)",welcome:"Welcome screen",question:"Question OPEN",reveal:"Reveal shown",leaderboard:"Leaderboard",finished:"Finished",end:"Holding screen"};
   statusEl.innerHTML=`Phase: <b>${map[state.phase]||state.phase}</b>${state.current_round?` · Round <b>${state.current_round}/${ROUNDS.length}</b>`:""}`;
   const nb=document.getElementById("btnNext");
-  if(state.phase==="lobby") nb.textContent="Start ▶";
-  else if(state.phase==="welcome") nb.textContent="Start game ▶";
+  if(state.phase==="welcome") nb.textContent="Show join code ▶";
+  else if(state.phase==="lobby") nb.textContent="Start ▶";
   else if(state.phase==="question") nb.textContent="Reveal ▶";
   else if(state.phase==="reveal") nb.textContent=(state.current_round<ROUNDS.length)?"Next round ▶":"Show leaderboard ▶";
   else if(state.phase==="leaderboard") nb.textContent="Crown winner ▶";
@@ -354,8 +354,8 @@ function updateStatus(){
 }
 async function advance(){
   const p=state.phase, n=state.current_round;
-  if(p==="lobby") await setState({phase:"welcome"});
-  else if(p==="welcome") await setState({phase:"question",current_round:1,round_started_at:new Date().toISOString()});
+  if(p==="welcome") await setState({phase:"lobby"});
+  else if(p==="lobby") await setState({phase:"question",current_round:1,round_started_at:new Date().toISOString()});
   else if(p==="question") await setState({phase:"reveal"});
   else if(p==="reveal"){ if(n<ROUNDS.length) await setState({phase:"question",current_round:n+1,round_started_at:new Date().toISOString()}); else await setState({phase:"leaderboard"}); }
   else if(p==="leaderboard") await setState({phase:"finished"});
@@ -368,8 +368,8 @@ async function prev(){
   else if(p==="finished") await setState({phase:"leaderboard"});
   else if(p==="leaderboard") await setState({phase:"reveal",current_round:ROUNDS.length});
   else if(p==="reveal") await setState({phase:"question",round_started_at:new Date().toISOString()});
-  else if(p==="question"){ if(n>1) await setState({phase:"reveal",current_round:n-1}); else await setState({phase:"welcome",current_round:0,round_started_at:null}); }
-  else if(p==="welcome") await setState({phase:"lobby"});
+  else if(p==="question"){ if(n>1) await setState({phase:"reveal",current_round:n-1}); else await setState({phase:"lobby",current_round:0,round_started_at:null}); }
+  else if(p==="lobby") await setState({phase:"welcome"});
   await poll();
 }
 async function doReveal(){ if(state.phase==="question"){ await setState({phase:"reveal"}); await poll(); } }
