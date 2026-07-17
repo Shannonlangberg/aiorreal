@@ -28,8 +28,11 @@ The game now supports much more than "AI or Real":
 - **⚡ Blitz** — a fast timer, worth **1.5× points**.
 - **💀 Sudden Death** — dramatic red screen; a wrong answer greys out that player's phone for the round (they're back next round — nobody's kicked out). Also 1.5× points.
 
-**19 questions are already loaded** (your 15 + 4 Futures/church rounds). That's a lot for
-a warm-up — I'd **toggle some off** (the "live" checkbox in admin) down to a punchy **10–12**.
+**12 questions are live** (7 more are benched in admin — flip their "live" toggle to swap).
+Rounds run on a **15-second timer** and the screen **auto-reveals** when it hits zero, so the
+pace never stalls (turn this off with the Auto-reveal button in the control bar if you'd
+rather drive it yourself). Scoring is **validated on the server**, so nobody can cheat the
+leaderboard — the winner is legit.
 
 ---
 
@@ -69,7 +72,7 @@ One primary button (or **spacebar**) drives everything; its label tells you what
 | You're in… | Press | What happens |
 |------------|-------|--------------|
 | Lobby | **Start ▶** | Opens Round 1 |
-| A question | **Reveal ▶** | Shows the answer + how the crowd split, per option |
+| A question | **Reveal ▶** (or wait — it auto-reveals at 0:00) | Shows the answer + crowd split per option |
 | A reveal | **Next round ▶** | Next question |
 | After the last round | **Show leaderboard ▶** | Top 10 |
 | Leaderboard | **Crown winner ▶** | Confetti + winner |
