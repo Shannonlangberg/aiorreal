@@ -54,7 +54,11 @@
   .qimg{max-height:44vh;max-width:74vw;border-radius:2vh;border:2px solid rgba(255,255,255,.18);box-shadow:0 24px 70px -24px rgba(0,0,0,.8);margin-top:2vh}
   .tapwrap{position:relative;display:inline-block;margin-top:2vh}
   .tapwrap .lab{position:absolute;width:5vh;height:5vh;border-radius:1vh;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:2.6vh}
-  audio{margin-top:2.4vh;width:56vw;max-width:760px;filter:hue-rotate(12deg)}
+  audio{display:none}
+  .audiowrap{margin-top:2.4vh;display:flex;flex-direction:column;align-items:center}
+  .playbtn{border:none;border-radius:999px;padding:1.8vh 4vh;font-family:var(--sans);font-size:2.8vh;color:#fff;cursor:pointer;
+    background:linear-gradient(100deg,var(--violet),var(--pink));box-shadow:0 16px 40px -16px rgba(0,0,0,.65);min-width:24vw}
+  .playbtn:active{transform:scale(.97)}
   /* image-pick: multiple uploaded photos to choose between */
   .imgopts{display:flex;flex-wrap:wrap;gap:2.6vh;justify-content:center;margin-top:2.6vh;max-width:90vw}
   .imgopt{position:relative;width:min(28vh,42vw);height:min(28vh,42vw);border-radius:1.6vh;overflow:hidden;border:2px solid rgba(255,255,255,.18);box-shadow:0 20px 50px -20px rgba(0,0,0,.75);transition:opacity .3s,border-color .3s}
@@ -225,7 +229,7 @@ function mediaScreen(r){
   if(r.media_type==="image" && r.interaction!=="tapgrid") return `<img class="qimg pop" src="${roundImage(r)}" alt="Round ${r.n}" onerror="this.style.display='none'">`;
   if(r.media_type==="audio"){
     return r.media_url
-      ? `<audio class="duckable" controls src="${r.media_url}"></audio><div class="audionote">Press play — the crowd votes on their phones (music ducks automatically)</div>`
+      ? `<div class="audiowrap"><audio class="duckable" id="qAudio" src="${r.media_url}"></audio><button class="playbtn" data-target="qAudio" data-label="clip">▶ Play clip</button></div>`
       : `<div class="audionote">🔊 Audio not uploaded yet (add it in the admin page)</div>`;
   }
   return "";
@@ -301,7 +305,7 @@ async function renderReveal(r){
   }
   const mbadge = r.mode==="blitz"?`<span class="qhead"><span class="m">⚡ Blitz · 1.5× points</span></span>`:(r.mode==="sudden_death"?`<span class="qhead"><span class="m sd">💀 Sudden Death</span></span>`:"");
   const revealAudioBlock = (r.media_type==="audio" && r.reveal_media_url)
-    ? `<audio class="duckable" controls src="${r.reveal_media_url}"></audio><div class="audionote">🎧 Press play — hear what gave it away (music ducks automatically)</div>`
+    ? `<div class="audiowrap"><audio class="duckable" id="revealAudio" src="${r.reveal_media_url}"></audio><button class="playbtn" data-target="revealAudio" data-label="reveal clip">🎧 Play reveal clip</button></div>`
     : "";
   stage.innerHTML=`<div class="fade" style="width:100%;display:flex;flex-direction:column;align-items:center">
     <div class="stamplbl">The answer is…</div>
@@ -423,8 +427,37 @@ function stopDucking(e){ if(isRoundClip(e.target) && duckingAudios.has(e.target)
 document.addEventListener("pause",stopDucking,true);
 document.addEventListener("ended",stopDucking,true);
 
+/* ---- round-clip play button: big tappable button (works great on a phone) + spacebar shortcut ---- */
+function triggerPlay(a){
+  if(!a) return;
+  a.dataset.played="1";
+  const p=a.play(); if(p&&p.catch) p.catch(()=>{});
+}
+function paintPlayBtn(a){
+  const btn=document.querySelector(`.playbtn[data-target="${a.id}"]`);
+  if(!btn) return;
+  const label=btn.dataset.label||"clip";
+  btn.textContent = !a.paused ? `⏸ Playing…` : (a.dataset.played ? `↺ Replay ${label}` : `▶ Play ${label}`);
+}
+document.addEventListener("click",e=>{
+  const btn=e.target.closest(".playbtn"); if(!btn) return;
+  const a=document.getElementById(btn.dataset.target); if(!a) return;
+  if(a.paused) triggerPlay(a); else a.pause();
+});
+document.addEventListener("play",e=>{ if(e.target.tagName==="AUDIO") paintPlayBtn(e.target); },true);
+document.addEventListener("pause",e=>{ if(e.target.tagName==="AUDIO") paintPlayBtn(e.target); },true);
+document.addEventListener("ended",e=>{ if(e.target.tagName==="AUDIO") paintPlayBtn(e.target); },true);
+function currentPlayableAudio(){
+  const id = state.phase==="question" ? "qAudio" : (state.phase==="reveal" ? "revealAudio" : null);
+  return id ? document.getElementById(id) : null;
+}
+
 document.addEventListener("keydown",e=>{
-  if(e.key===" "||e.key==="ArrowRight"){e.preventDefault();advance();}
+  if(e.key===" "||e.key==="ArrowRight"){
+    e.preventDefault();
+    const a=currentPlayableAudio();
+    if(a && a.paused && !a.dataset.played) triggerPlay(a); else advance();
+  }
   else if(e.key==="ArrowLeft"){e.preventDefault();prev();}
   else if(e.key.toLowerCase()==="r")doReveal();
   else if(e.key.toLowerCase()==="l")doBoard();
