@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Is it AI — Sound FX (Futures)</title>
+<title>Name That Prompt — Sound FX (Futures)</title>
 <style>
   @font-face{font-family:'Gal Gothic';src:url('assets/fonts/GalGothic-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
   @font-face{font-family:'Rhymes Display';src:url('assets/fonts/RhymesDisplay-LightItalic.woff2') format('woff2');font-weight:300;font-style:italic;font-display:swap}
@@ -44,15 +44,17 @@
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;border:1px solid rgba(255,255,255,.14);
     padding:11px 18px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
   .toast.show{opacity:1}
+  .vtag{position:fixed;bottom:10px;right:12px;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.28);pointer-events:none}
 </style>
 </head>
 <body>
-  <div class="brandbar"><img src="assets/futures-wordmark-white.png" alt="Futures Church"><span class="tag">Dream Team · Is it AI</span></div>
+  <div class="brandbar"><img src="assets/futures-wordmark-white.png" alt="Futures Church"><span class="tag">Dream Team · Name That Prompt</span></div>
   <h1>Sound FX</h1>
   <p class="sub">Tap to fire on the big screen. It plays there, not here — music ducks automatically.</p>
   <div class="grid" id="grid"></div>
   <div class="status"><span class="dot" id="dot"></span><span id="statusTxt">ready</span></div>
   <div class="toast" id="toast"></div>
+  <div class="vtag">v2</div>
 
 <script src="config.js?v=9"></script>
 <script>

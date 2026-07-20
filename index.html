@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#160a2e">
-<title>Is it AI — Futures</title>
+<title>Name That Prompt — Futures</title>
 <style>
   @font-face{font-family:'Gal Gothic';src:url('assets/fonts/GalGothic-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
   @font-face{font-family:'Rhymes Display';src:url('assets/fonts/RhymesDisplay-LightItalic.woff2') format('woff2');font-weight:300;font-style:italic;font-display:swap}
@@ -30,6 +30,7 @@
   .conn{margin-left:auto;font-size:11px;color:var(--dim);display:flex;align-items:center;gap:6px;letter-spacing:.04em;text-transform:uppercase}
   .conn .pip{width:7px;height:7px;border-radius:50%;background:var(--lemon);box-shadow:0 0 10px var(--lemon)}
   .conn.bad .pip{background:var(--orange);box-shadow:0 0 10px var(--orange)}
+  .vtag{position:fixed;bottom:10px;right:12px;z-index:6;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.28);pointer-events:none}
   .center{flex:1;display:flex;flex-direction:column;justify-content:center}
   .title{margin:4px 0 6px;line-height:.9}
   .title .a{font-family:var(--sans);font-weight:400;font-size:clamp(38px,12vw,56px);letter-spacing:-.02em;display:block}
@@ -95,6 +96,7 @@
 </head>
 <body>
 <div class="rays"></div>
+<div class="vtag">v2</div>
 <div class="wrap">
   <div class="topbar">
     <img src="assets/futures-wordmark-white.png" alt="Futures Church">
@@ -137,7 +139,7 @@ function renderJoin(){
   if(lastRenderKey==="join") return; lastRenderKey="join";
   h(`<div class="fade">
       <span class="kicker">Dream Team Game</span>
-      <h1 class="title"><span class="a">Is it</span><span class="b">AI?</span></h1>
+      <h1 class="title"><span class="a">Name That</span><span class="b">Prompt</span></h1>
       <p class="sub">Pop in your name, then out-smart the crowd. Right answers <b style="color:#fff">and</b> speed both score points.</p>
       <input class="name" id="nm" maxlength="24" placeholder="Your name" autocomplete="off" enterkeyhint="go">
       <button class="btn" id="joinBtn">Let's go →</button>

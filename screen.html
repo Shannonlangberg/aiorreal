@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Is it AI — Big Screen (Futures)</title>
+<title>Name That Prompt — Big Screen (Futures)</title>
 <style>
   @font-face{font-family:'Gal Gothic';src:url('assets/fonts/GalGothic-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
   @font-face{font-family:'Rhymes Display';src:url('assets/fonts/RhymesDisplay-Light.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap}
@@ -30,6 +30,7 @@
   .brandbar{position:fixed;top:2.6vh;left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:center;gap:16px}
   .brandbar img{height:2.3vh;opacity:.95}
   .brandbar .tag{letter-spacing:.22em;text-transform:uppercase;font-size:1.3vh;color:var(--dim)}
+  .vtag{position:fixed;bottom:1.4vh;right:1.6vw;z-index:6;font-size:1.2vh;letter-spacing:.16em;color:rgba(255,255,255,.28);pointer-events:none}
   #stage{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;padding:9vh 4vw 9vh;text-align:center;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .grad{background:linear-gradient(100deg,var(--orange),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
   .fade{animation:fade .5s ease;margin:auto 0;flex:none;width:100%}@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
@@ -156,7 +157,8 @@
 <body>
 <div id="bg"><div class="fan"></div></div>
 <div id="burst"><div class="b"></div></div>
-<div class="brandbar"><img src="assets/futures-wordmark-white.png" alt="Futures Church"><span class="tag">Dream Team · Is it AI</span></div>
+<div class="brandbar"><img src="assets/futures-wordmark-white.png" alt="Futures Church"><span class="tag">Dream Team · Name That Prompt</span></div>
+<div class="vtag">v2</div>
 <div id="stage"></div>
 
 <audio id="bgm" src="assets/audio/lobby-groove.mp3" loop preload="auto"></audio>
@@ -219,12 +221,12 @@ function renderWelcome(){
 }
 function renderEnd(){
   stage.innerHTML=`<div class="fade">
-    <div class="lbtitle"><span class="a">Thanks for playing</span><span class="b grad">Is it AI</span></div></div>`;
+    <div class="lbtitle"><span class="a">Thanks for playing</span><span class="b grad">Name That Prompt</span></div></div>`;
 }
 
 function renderLobby(){
   stage.innerHTML=`<div class="fade">
-    <div class="tlock"><span class="a">Is it</span><span class="b grad">AI?</span></div>
+    <div class="tlock"><span class="a">Name That</span><span class="b grad">Prompt</span></div>
     <div class="lobby-sub">Scan the code, add your name, and beat the crowd.</div>
     <div class="qrbox pop"><img src="https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=8&data=${encodeURIComponent(JOIN_URL)}" alt="Scan" onerror="this.style.display='none'"></div>
     <div class="joinurl">Point your phone camera at the code</div>
