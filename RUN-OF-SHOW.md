@@ -38,8 +38,9 @@ The game now supports much more than "AI or Real":
 - **⚡ Blitz** — a fast timer, worth **1.5× points**.
 - **💀 Sudden Death** — dramatic red screen; a wrong answer greys out that player's phone for the round (they're back next round — nobody's kicked out). Also 1.5× points.
 
-**12 questions are live** (7 more are benched in admin — flip their "live" toggle to swap).
-Rounds run on a **15-second timer** and the screen **auto-reveals** when it hits zero, so the
+**10 questions are live** (the old "Is it AI" set is retired but not deleted — flip a round's
+"live" toggle in admin if you ever want to bring one back). Rounds run on a **15-second timer**
+and the screen **auto-reveals** when it hits zero, so the
 pace never stalls (turn this off with the Auto-reveal button in the control bar if you'd
 rather drive it yourself). Scoring is **validated on the server**, so nobody can cheat the
 leaderboard — the winner is legit. Answer right and fast for the most points (500–1000). Answer
@@ -51,20 +52,25 @@ pure ego.
 
 ---
 
-## 🖼️ MUST DO before the event — add your media
+## 🖼️ MUST DO before the meeting — build the 10 rounds
 
-Several rounds are ready but need their photo/audio. Open **admin**, open each round, and
-upload the file (it saves automatically). Rounds waiting for media:
+All 10 rounds are currently **placeholder templates** — open **admin** and fill in each one
+with a real staff photo and real prompt text (everything with `[brackets like this]` needs
+replacing), then set the correct answer:
 
-- **Photos:** Midjourney cat, skyscrapers, tomato, tap-the-glitch crowd, blueprint,
-  marathon (Sudden Death), 1920s family, headshots, watch face, mandala (Blitz).
-- **Audio:** the "voice clone" round (round 7).
-
-A couple of rounds (Midjourney prompt, "who coded it") have placeholder wrong-answers —
-tweak those option texts to taste. And the **preacher round** is currently an AI-written
-line; to add a *real* Ps Ashley / *Multiply or Die* quote, hit **＋ Add question** in admin,
-paste the quote, set the answer to "A real preacher." (I couldn't source a verified quote —
-the book only released today — so I didn't want to guess one.)
+- **Rounds 1–5 — "Name That Prompt":** upload one AI-transformed staff photo per round, write
+  3 prompt options (one real, two decoys), mark the real one as the answer.
+- **Round 6 — "Guess the Victim":** an AI photo where the options are staff names instead of
+  prompts — crowd guesses whose face is underneath.
+- **Round 7 — "Two Truths and an AI Lie":** 3 prompt options that all sound plausible; only
+  one actually made the photo.
+- **Round 8 — "Escalating Absurdity":** the one non-standard round — same staffer, 3 photos
+  from 3 different prompts (upload all 3 in the image-pick slots), crowd guesses which tile
+  matches a prompt you read out.
+- **Round 9 — "Is It AI, Round 2":** a callback bonus round — mix in one real, non-generated
+  candid staff photo and ask AI-generated vs. real.
+- **Round 10 — "Whose Idea Was It":** crowd guesses which staff member submitted a given
+  prompt — options are staff names.
 
 > After any edit, **refresh the big screen** so it picks up your changes.
 
