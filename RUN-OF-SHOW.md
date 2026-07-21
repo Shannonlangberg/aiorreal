@@ -1,4 +1,4 @@
-# 🎬 Name That Prompt — Run of Show (Futures Dream Team)
+# 🎬 AI or Die — Run of Show (Futures Dream Team)
 
 A live, phone-based crowd game-show in the Futures brand. The big screen shows a
 photo, quote, clip or question; the crowd answers on their phones; points for being

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#160a2e">
-<title>Name That Prompt — Futures</title>
+<title>AI or Die — Futures</title>
 <style>
   @font-face{font-family:'Gal Gothic';src:url('assets/fonts/GalGothic-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
   @font-face{font-family:'Rhymes Display';src:url('assets/fonts/RhymesDisplay-LightItalic.woff2') format('woff2');font-weight:300;font-style:italic;font-display:swap}
@@ -139,10 +139,11 @@ function renderJoin(){
   if(lastRenderKey==="join") return; lastRenderKey="join";
   h(`<div class="fade">
       <span class="kicker">Staff Meeting Tuesday 21st July</span>
-      <h1 class="title"><span class="a">Name That</span><span class="b">Prompt</span></h1>
+      <h1 class="title"><span class="a">AI or</span><span class="b">Die</span></h1>
       <p class="sub">Pop in your name, then out-smart the crowd. Right answers <b style="color:#fff">and</b> speed both score points.</p>
       <input class="name" id="nm" maxlength="24" placeholder="Your name" autocomplete="off" enterkeyhint="go">
       <button class="btn" id="joinBtn">Let's go →</button>
+      <div class="tiny">If you're not AI-ing, you're dying.</div>
     </div>`);
   const nm=document.getElementById("nm"), b=document.getElementById("joinBtn");
   nm.focus();

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Name That Prompt — Big Screen (Futures)</title>
+<title>AI or Die — Big Screen (Futures)</title>
 <style>
   @font-face{font-family:'Gal Gothic';src:url('assets/fonts/GalGothic-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
   @font-face{font-family:'Rhymes Display';src:url('assets/fonts/RhymesDisplay-Light.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap}
@@ -157,7 +157,7 @@
 <body>
 <div id="bg"><div class="fan"></div></div>
 <div id="burst"><div class="b"></div></div>
-<div class="brandbar"><img src="assets/futures-wordmark-white.png" alt="Futures Church"><span class="tag">Staff Meeting · Name That Prompt</span></div>
+<div class="brandbar"><img src="assets/futures-wordmark-white.png" alt="Futures Church"><span class="tag">Staff Meeting · AI or Die</span></div>
 <div class="vtag">v2.1</div>
 <div id="stage"></div>
 
@@ -221,12 +221,12 @@ function renderWelcome(){
 }
 function renderEnd(){
   stage.innerHTML=`<div class="fade">
-    <div class="lbtitle"><span class="a">Thanks for playing</span><span class="b grad">Name That Prompt</span></div></div>`;
+    <div class="lbtitle"><span class="a">Thanks for playing</span><span class="b grad">AI or Die</span></div></div>`;
 }
 
 function renderLobby(){
   stage.innerHTML=`<div class="fade">
-    <div class="tlock"><span class="a">Name That</span><span class="b grad">Prompt</span></div>
+    <div class="tlock"><span class="a">AI or</span><span class="b grad">Die</span></div>
     <div class="lobby-sub">Scan the code, add your name, and beat the crowd.</div>
     <div class="qrbox pop"><img src="https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=8&data=${encodeURIComponent(JOIN_URL)}" alt="Scan" onerror="this.style.display='none'"></div>
     <div class="joinurl">Point your phone camera at the code</div>
