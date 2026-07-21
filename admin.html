@@ -143,6 +143,29 @@ function imgOptionRow(caption,imageUrl,idx,ansIdx){
   };
   return d;
 }
+function morphImageRow(imageUrl,idx){
+  const d=document.createElement("div"); d.className="optrow morphrow";
+  d.dataset.imageUrl=imageUrl||"";
+  d.style.alignItems="flex-start";
+  d.innerHTML=`<span class="correcttag" style="width:22px;margin-top:10px">${idx+1}.</span>
+    <div style="flex:1">
+      <div class="rowflex"><input type="file" accept="image/*" class="imgfile" style="width:auto"><span class="muted imgstat"></span></div>
+      <div class="imgprevwrap">${imageUrl?`<img class="prev" style="max-height:120px" src="${esc(imageUrl)}">`:`<div class="muted" style="margin-top:4px">No photo uploaded yet.</div>`}</div>
+    </div>
+    <button class="del" title="Remove" style="margin-top:10px">✕</button>`;
+  d.querySelector(".del").onclick=()=>{d.remove();};
+  d.querySelector(".imgfile").onchange=async(e)=>{
+    const f=e.target.files[0]; if(!f) return;
+    const st=d.querySelector(".imgstat"); st.textContent="Uploading…";
+    try{
+      const url=await uploadFile(f);
+      d.dataset.imageUrl=url;
+      d.querySelector(".imgprevwrap").innerHTML=`<img class="prev" style="max-height:120px" src="${esc(url)}">`;
+      st.textContent="Uploaded ✓";
+    }catch(err){ st.textContent="Upload failed"; toast(String(err.message||err)); }
+  };
+  return d;
+}
 function card(r,i){
   const el=document.createElement("div"); el.className="card"; el.dataset.id=r.id;
   const opts=Array.isArray(r.options)?r.options:[];
@@ -169,7 +192,8 @@ function card(r,i){
       <div><label class="f">Interaction</label><select data-f="interaction">
         <option value="choice" ${r.interaction!=="tapgrid"&&r.interaction!=="imgpick"?"selected":""}>Multiple choice</option>
         <option value="tapgrid" ${r.interaction==="tapgrid"?"selected":""}>Tap the quadrant (image)</option>
-        <option value="imgpick" ${r.interaction==="imgpick"?"selected":""}>Pick the real photo (upload 2–4 images)</option></select></div>
+        <option value="imgpick" ${r.interaction==="imgpick"?"selected":""}>Pick the real photo (upload 2–4 images)</option>
+        <option value="morph" ${r.interaction==="morph"?"selected":""}>Morph reveal (upload 3–6 photos, guess who as it morphs)</option></select></div>
       <div><label class="f">Mode</label><select data-f="mode">
         <option value="normal" ${(!r.mode||r.mode==="normal")?"selected":""}>Normal</option>
         <option value="blitz" ${r.mode==="blitz"?"selected":""}>⚡ Blitz (fast, 1.5×)</option>
@@ -188,10 +212,15 @@ function card(r,i){
       <div data-el="revealprevwrap">${r.reveal_media_url?`<audio controls src="${esc(r.reveal_media_url)}" style="margin-top:8px;width:100%"></audio>`:`<div class="muted" style="margin-top:6px">Nothing uploaded yet.</div>`}</div>
     </div>
 
-    <div data-blk="choice" class="${r.interaction!=="choice"?"hide":""}">
+    <div data-blk="choice" class="${(r.interaction!=="choice"&&r.interaction!=="morph")?"hide":""}">
       <label class="f">Answer options (tick the correct one)</label>
       <div data-el="opts"></div>
       <button class="btn sm" data-a="addopt" style="margin-top:2px">+ Add option</button>
+    </div>
+    <div data-blk="morph" class="${r.interaction==="morph"?"":"hide"}">
+      <label class="f">Morph sequence — upload in order (start ridiculous, end on the real photo)</label>
+      <div data-el="morphimgs"></div>
+      <button class="btn sm" data-a="addmorph" style="margin-top:2px">+ Add photo</button>
     </div>
     <div data-blk="tap" class="${r.interaction==="tapgrid"?"":"hide"}">
       <label class="f">Correct quadrant</label>
@@ -240,12 +269,20 @@ function card(r,i){
   setImgRadioNames();
   const imgObs=new MutationObserver(setImgRadioNames); imgObs.observe(imgOptsBox,{childList:true});
 
+  // morph sequence list (upload 3-6 photos in order, no "correct" flag — order is the reveal)
+  const morphBox=el.querySelector('[data-el="morphimgs"]');
+  const morphImgs=(r.interaction==="morph"&&Array.isArray(r.option_images))?r.option_images:[];
+  for(let idx=0; idx<Math.max(3,morphImgs.length); idx++){
+    morphBox.appendChild(morphImageRow(morphImgs[idx]||"", idx));
+  }
+  el.querySelector('[data-a="addmorph"]').onclick=()=>{const idx=morphBox.children.length;if(idx>=6)return;morphBox.appendChild(morphImageRow("",idx));mark();};
+
   // media type / interaction toggles
   function updateMediaVisibility(){
     const mt=el.querySelector('[data-f="media_type"]').value;
     const interaction=el.querySelector('[data-f="interaction"]').value;
-    el.querySelector('[data-blk="media"]').classList.toggle("hide", mt==="none" || interaction==="imgpick");
-    el.querySelector('[data-blk="revealaudio"]').classList.toggle("hide", mt!=="audio" || interaction==="imgpick");
+    el.querySelector('[data-blk="media"]').classList.toggle("hide", mt==="none" || interaction==="imgpick" || interaction==="morph");
+    el.querySelector('[data-blk="revealaudio"]').classList.toggle("hide", mt!=="audio" || interaction==="imgpick" || interaction==="morph");
   }
   el.querySelector('[data-f="media_type"]').addEventListener("change",e=>{
     const t=e.target.value;
@@ -253,10 +290,11 @@ function card(r,i){
     updateMediaVisibility(); mark();
   });
   el.querySelector('[data-f="interaction"]').addEventListener("change",e=>{
-    const val=e.target.value, tap=val==="tapgrid", imgpick=val==="imgpick";
-    el.querySelector('[data-blk="choice"]').classList.toggle("hide", val!=="choice");
+    const val=e.target.value, tap=val==="tapgrid", imgpick=val==="imgpick", morph=val==="morph";
+    el.querySelector('[data-blk="choice"]').classList.toggle("hide", val!=="choice" && val!=="morph");
     el.querySelector('[data-blk="tap"]').classList.toggle("hide",!tap);
     el.querySelector('[data-blk="imgpick"]').classList.toggle("hide",!imgpick);
+    el.querySelector('[data-blk="morph"]').classList.toggle("hide",!morph);
     if(tap){ const mt=el.querySelector('[data-f="media_type"]'); if(mt.value==="none"){mt.value="image";mt.dispatchEvent(new Event("change"));} }
     updateMediaVisibility(); mark();
   });
@@ -309,10 +347,15 @@ function card(r,i){
       let keptBefore=0; for(let k=0;k<checked;k++){ if(txts[k]&&txts[k].length) keptBefore++; }
       answer_index=Math.min(keptBefore,Math.max(0,options.length-1));
       if(options.length<2){ toast("Add at least 2 options"); return; }
+      if(interaction==="morph"){
+        const morphRows=[...morphBox.querySelectorAll(".morphrow")];
+        option_images=morphRows.map(row=>row.dataset.imageUrl||"").filter(Boolean);
+        if(option_images.length<3){ toast("Upload at least 3 morph photos"); return; }
+      }
     }
     const timer=g("timer_seconds").value?parseInt(g("timer_seconds").value):null;
     const f={label:g("label").value,difficulty:g("difficulty").value,prompt:g("prompt").value,content:g("content").value,
-      media_type:interaction==="imgpick"?"none":g("media_type").value,interaction,options,option_images,answer_index,mode:g("mode").value,
+      media_type:(interaction==="imgpick"||interaction==="morph")?"none":g("media_type").value,interaction,options,option_images,answer_index,mode:g("mode").value,
       timer_seconds:timer,reveal:g("reveal").value,active:g("active").checked};
     try{await patchRound(r.id,f);el.classList.remove("dirty");el.querySelector('[data-el="savestat"]').textContent="Saved ✓";toast("Saved");await reload();}
     catch(e){toast("Save failed");}
