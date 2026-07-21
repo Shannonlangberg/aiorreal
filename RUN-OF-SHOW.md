@@ -35,6 +35,10 @@ The game now supports much more than "AI or Real":
 - **Multiple choice** with **2, 3 or 4 answer options** and your own labels (A/B/C/D).
 - **Tap-the-quadrant** image rounds — the crowd taps which quarter of the photo has the glitch.
 - **Audio rounds** — you play a clip on the big screen; the crowd votes on their phones.
+- **Morph reveal** — upload 3–6 photos of someone (start ridiculous, end on the real photo);
+  the big screen cycles through them automatically over the timer, landing on the real one
+  right as it ends, while the crowd guesses who it is. Build one in admin under Interaction →
+  "Morph reveal."
 - **⚡ Blitz** — a fast timer, worth **1.5× points**.
 - **💀 Sudden Death** — dramatic red screen; a wrong answer greys out that player's phone for the round (they're back next round — nobody's kicked out). Also 1.5× points.
 
